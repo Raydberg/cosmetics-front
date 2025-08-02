@@ -1,6 +1,9 @@
+import ProductCard_11 from "@/shared/components/product-card"
 
 export const ProductPage = () => {
   return (
-    <div>ProductPage</div>
+    <div>
+      <ProductCard_11 />
+    </div>
   )
 }
