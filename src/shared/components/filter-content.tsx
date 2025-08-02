@@ -1,0 +1,137 @@
+import { useState } from "react"
+import { AnimatePresence, motion } from 'framer-motion';
+import { ChevronDown } from "lucide-react";
+import { Checkbox } from "./ui/checkbox";
+import { Label } from "./ui/label";
+
+
+const filterItems = [
+    { id: "beauty", label: "Belleza", checked: false },
+    { id: "kids", label: "Niños", checked: true },
+    { id: "men", label: "Hombres", checked: true },
+    { id: "women", label: "Mujeres", checked: true }
+]
+
+export const FilterContent = () => {
+    const [openSections, setOpenSections] = useState({
+        categories: true,
+        price: true
+    })
+
+    const toggleSection = (section: keyof typeof openSections) => {
+        setOpenSections(prev => ({
+            ...prev,
+            [section]: !prev[section]
+        }))
+    }
+
+    return (
+        <div className="space-y-6">
+            <div>
+                <motion.button
+                    onClick={() => toggleSection('categories')}
+                    className="flex items-center justify-between w-full text-left mb-3 p-2 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors"
+                    whileHover={{ scale: 1.02 }}
+                    whileTap={{ scale: 0.98 }}
+                >
+                    <h4 className="text-sm font-semibold text-gray-900 dark:text-gray-100">
+                        Categorías
+                    </h4>
+                    <motion.div
+                        animate={{ rotate: openSections.categories ? 180 : 0 }}
+                        transition={{ duration: 0.2 }}
+                    >
+                        <ChevronDown size={16} />
+                    </motion.div>
+                </motion.button>
+
+                <AnimatePresence>
+                    {openSections.categories && (
+                        <motion.div
+                            initial={{ height: 0, opacity: 0 }}
+                            animate={{ height: "auto", opacity: 1 }}
+                            exit={{ height: 0, opacity: 0 }}
+                            transition={{ duration: 0.3 }}
+                            className="overflow-hidden"
+                        >
+                            <div className="space-y-3 pl-2">
+                                {filterItems.map((item, index) => (
+                                    <motion.div
+                                        key={item.id}
+                                        initial={{ x: -20, opacity: 0 }}
+                                        animate={{ x: 0, opacity: 1 }}
+                                        transition={{ delay: index * 0.1 }}
+                                        className="flex items-center gap-3 p-2 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors"
+                                    >
+                                        <Checkbox id={item.id} defaultChecked={item.checked} />
+                                        <Label
+                                            htmlFor={item.id}
+                                            className="text-sm font-normal cursor-pointer hover:text-gray-900 dark:hover:text-gray-100 flex-1"
+                                        >
+                                            {item.label}
+                                        </Label>
+                                    </motion.div>
+                                ))}
+                            </div>
+                        </motion.div>
+                    )}
+                </AnimatePresence>
+            </div>
+
+            <div>
+                <motion.button
+                    onClick={() => toggleSection('price')}
+                    className="flex items-center justify-between w-full text-left mb-3 p-2 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors"
+                    whileHover={{ scale: 1.02 }}
+                    whileTap={{ scale: 0.98 }}
+                >
+                    <h4 className="text-sm font-semibold text-gray-900 dark:text-gray-100">
+                        Rango de Precio
+                    </h4>
+                    <motion.div
+                        animate={{ rotate: openSections.price ? 180 : 0 }}
+                        transition={{ duration: 0.2 }}
+                    >
+                        <ChevronDown size={16} />
+                    </motion.div>
+                </motion.button>
+
+                <AnimatePresence>
+                    {openSections.price && (
+                        <motion.div
+                            initial={{ height: 0, opacity: 0 }}
+                            animate={{ height: "auto", opacity: 1 }}
+                            exit={{ height: 0, opacity: 0 }}
+                            transition={{ duration: 0.3 }}
+                            className="overflow-hidden"
+                        >
+                            <div className="space-y-3 pl-2">
+                                {[
+                                    { id: "price1", label: "Menos de $20" },
+                                    { id: "price2", label: "$20 - $50" },
+                                    { id: "price3", label: "Más de $50" }
+                                ].map((item, index) => (
+                                    <motion.div
+                                        key={item.id}
+                                        initial={{ x: -20, opacity: 0 }}
+                                        animate={{ x: 0, opacity: 1 }}
+                                        transition={{ delay: index * 0.1 }}
+                                        className="flex items-center gap-3 p-2 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors"
+                                    >
+                                        <Checkbox id={item.id} />
+                                        <Label
+                                            htmlFor={item.id}
+                                            className="text-sm font-normal cursor-pointer hover:text-gray-900 dark:hover:text-gray-100 flex-1"
+                                        >
+                                            {item.label}
+                                        </Label>
+                                    </motion.div>
+                                ))}
+                            </div>
+                        </motion.div>
+                    )}
+                </AnimatePresence>
+            </div>
+        </div>
+    )
+}
