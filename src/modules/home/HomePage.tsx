@@ -2,14 +2,18 @@ import { CategoryCard } from "@/shared/components/category-card"
 import { ProductCard } from "@/shared/components/product-card"
 import { Button } from "@/shared/components/ui/button"
 import { ArrowRight } from "lucide-react"
+import { Link } from "react-router"
 
 export const HomePage = () => {
   return (
     <div>
-      <h1>Nuetras Categorias</h1>
-      <div>
-        <CategoryCard />
-      </div>
+      <section className="border flex flex-col items-center ">
+        <h1 className="font-bold text-2xl">Nuetras Categorias</h1>
+        <div>
+          <CategoryCard />
+        </div>
+
+      </section>
       <section className="border flex flex-col items-center space-y-5">
         <h1 className="font-bold text-2xl">Productos Destacados</h1>
 
@@ -21,7 +25,9 @@ export const HomePage = () => {
         </div>
         <div>
           <Button>
-            Ver todos los Productos
+            <Link to={'/products'}>
+              Ver todos los Productos
+            </Link>
             <ArrowRight />
           </Button>
         </div>
