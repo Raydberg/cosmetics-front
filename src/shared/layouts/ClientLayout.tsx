@@ -6,7 +6,7 @@ export const ClientLayout = () => {
     return (
         <div className='min-h-screen  bg-background'>
             <CustomHeader />
-            <div className='p-5'>
+            <div className='pt-16 lg:pt-20 p-5'>
                 <Outlet />
             </div>
             <CustomFooter />
