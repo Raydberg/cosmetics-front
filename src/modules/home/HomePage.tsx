@@ -2,13 +2,13 @@ import { ProductCard } from "@/shared/components/product-card"
 import { Button } from "@/shared/components/ui/button"
 import { ArrowRight } from "lucide-react"
 import { Link } from "react-router"
-import { CategorySection } from "../admin/categories/CategorySection"
+import { CategorySection } from "../categories/CategorySection"
 
 export const HomePage = () => {
   return (
     <div>
       <section className=" flex flex-col items-center ">
-        <h1 className="font-bold text-2xl">Nuetras Categorias</h1>
+        <h1 className="font-bold text-2xl">Nuestras Categorias</h1>
         <CategorySection />
       </section>
       <section className="border flex flex-col items-center space-y-5">

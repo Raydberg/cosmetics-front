@@ -1,23 +1,16 @@
 import { Outlet } from "react-router";
-import { Button } from "../components/ui/button";
-import { ArrowRightFromLine } from "lucide-react";
+
+import { AdminHeader } from "@/modules/admin/components/AdminHeader";
 
 const AdminLayout = () => {
     return (
         <div>
-            <header className="flex justify-between items-center mx-3 my-2">
-                <h1>Administrador</h1>
-                <div className="flex gap-4">
-                    <Button variant={'outline'}>
-                        Ver Sitio
-                    </Button>
-                    <Button>
-                        <ArrowRightFromLine />
-                        Cerrar Sesion
-                    </Button>
-                </div>
-            </header>
+            <div className=" pt-16 lg:pt-20 p-5 flex gap-4">
+                <AdminHeader />
+            </div>
+            <div className="px-8">
             <Outlet />
+            </div>
         </div>
     )
 }

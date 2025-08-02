@@ -6,7 +6,7 @@ import { CategoriesAdmin } from "./categories/CategoriesAdmin"
 export const PanelPage = () => {
     return (
         <div>
-            <Tabs defaultValue="products" className="w-full border p-5">
+            <Tabs defaultValue="products" className="w-full  p-5">
                 <TabsList>
                     <TabsTrigger className="cursor-pointer" value="products">
                         <PackageOpen />

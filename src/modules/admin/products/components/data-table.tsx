@@ -20,8 +20,6 @@ import { Input } from "@/shared/components/ui/input"
 
 
 
-
-
 export function DataTable() {
   // Example data, replace with your actual data source
 
@@ -55,7 +53,8 @@ export function DataTable() {
 
   return (
     <div className="w-full">
-      <div className="text-end">
+      <div className="flex justify-between items-center">
+        <h1 className="font-bold text-2xl">Gestionar Productos</h1>
         <Button>
           <Plus />
           Nuevo Producto
@@ -94,7 +93,7 @@ export function DataTable() {
           </DropdownMenuContent>
         </DropdownMenu>
       </div>
-      <div className="overflow-hidden rounded-md border">
+      <div className="overflow-hidden rounded-md   ">
         <Table>
           <TableHeader>
             {table.getHeaderGroups().map((headerGroup) => (
@@ -144,6 +143,8 @@ export function DataTable() {
           </TableBody>
         </Table>
       </div>
+
+      {/* Footer table  */}
       <div className="flex items-center justify-end space-x-2 py-4">
         <div className="text-muted-foreground flex-1 text-sm">
           {table.getFilteredSelectedRowModel().rows.length} of{" "}

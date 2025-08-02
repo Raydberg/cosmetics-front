@@ -38,10 +38,32 @@ export const columns: ColumnDef<Payment>[] = [
     },
     {
         accessorKey: "image",
-        header: "Image",
-        cell: () => (
-            <div className="capitalize">Imagen</div>
+        header: () => (
+            <>
+                <p className='text-center'>Imagen</p>
+            </>
         ),
+        cell: ({ row }) => {
+            const imageUrl = row.getValue("image") as string;
+            const productName = row.getValue("name") as string;
+
+            return (
+                <div className="flex items-center justify-center p-1">
+                    <div className="relative w-12 h-12 rounded-lg overflow-hidden border border-gray-200 bg-gray-50">
+                        <img
+                            src={imageUrl || 'https://raw.githubusercontent.com/stackzero-labs/ui/refs/heads/main/public/placeholders/essential-oil-01.jpg'}
+                            alt={productName || "Producto"}
+                            className="w-full h-full object-cover transition-transform hover:scale-110 cursor-pointer"
+                            onError={(e) => {
+                                const target = e.currentTarget;
+                                target.src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDgiIGhlaWdodD0iNDgiIHZpZXdCb3g9IjAgMCA0OCA0OCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjQ4IiBoZWlnaHQ9IjQ4IiBmaWxsPSIjRjNGNEY2Ii8+CjxwYXRoIGQ9Ik0yNCAzNkMyNCAzNiAzMCAzMCAzNiAyNEMzNiAxOCAzMCAxMiAyNCAxMkMxOCAxMiAxMiAxOCAxMiAyNEMxMiAzMCAxOCAzNiAyNCAzNiIgZmlsbD0iIzlDQTNBRiIvPgo8L3N2Zz4K';
+                            }}
+                        />
+                    </div>
+                </div>
+            );
+        },
+        size: 80
     },
     {
         accessorKey: "name",
@@ -76,45 +98,22 @@ export const columns: ColumnDef<Payment>[] = [
             </div>
         ),
     },
-    // {
-    //     accessorKey: "email",
-    //     header: ({ column }) => {
-    //         return (
-    //             <Button
-    //                 variant="ghost"
-    //                 onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-    //             >
-    //                 Email
-    //                 <ArrowUpDown />
-    //             </Button>
-    //         )
-    //     },
-    //     cell: ({ row }) => <div className="lowercase">{row.getValue("email")}</div>,
-    // },
-    // {
-    //     accessorKey: "amount",
-    //     header: () => <div className="text-right">Amount</div>,
-    //     cell: ({ row }) => {
-    //         const amount = parseFloat(row.getValue("amount"))
-
-    //         const formatted = new Intl.NumberFormat("en-US", {
-    //             style: "currency",
-    //             currency: "PEN",
-    //         }).format(amount)
-
-    //         return <div className="text-right font-medium">{formatted}</div>
-    //     },
-    // },
     {
         accessorKey: "acctions",
         header: () => "Acciones",
         cell: () => {
             return (
-                <div className='space-x-1'>
-                    <Button variant={'outline'}>
+                <div className='flex gap-1'>
+                    <Button
+                        className='cursor-pointer'
+                        onClick={() => alert("Editar producto")}
+                        variant={'outline'}>
                         <SquarePen />
                     </Button>
-                    <Button variant={'destructive'}>
+                    <Button
+                        className='cursor-pointer'
+                        onClick={() => alert("Eliminar Producto")}
+                        variant={'destructive'}>
                         <Trash color='white' />
                     </Button>
                 </ div>
@@ -122,28 +121,5 @@ export const columns: ColumnDef<Payment>[] = [
             )
         },
     },
-    // {
-    //     id: "actions",
-    //     enableHiding: false,
-    //     cell: () => {
 
-    //         return (
-    //             <DropdownMenu>
-    //                 <DropdownMenuTrigger asChild>
-    //                     <Button variant="ghost" className="h-8 w-8 p-0">
-    //                         <span className="sr-only">Open menu</span>
-    //                         <MoreHorizontal />
-    //                     </Button>
-    //                 </DropdownMenuTrigger>
-    //                 <DropdownMenuContent align="end">
-    //                     <DropdownMenuLabel>Actions</DropdownMenuLabel>
-
-    //                     <DropdownMenuSeparator />
-    //                     <DropdownMenuItem>View customer</DropdownMenuItem>
-    //                     <DropdownMenuItem>View payment details</DropdownMenuItem>
-    //                 </DropdownMenuContent>
-    //             </DropdownMenu>
-    //         )
-    //     },
-    // },
 ]
