@@ -4,9 +4,11 @@ import { Outlet } from 'react-router'
 
 export const ClientLayout = () => {
     return (
-        <div className='min-h-screen bg-background'>
+        <div className='min-h-screen  bg-background'>
             <CustomHeader />
-            <Outlet />
+            <div className='p-5'>
+                <Outlet />
+            </div>
             <CustomFooter />
         </div>
     )
