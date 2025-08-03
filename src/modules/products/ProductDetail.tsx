@@ -41,7 +41,7 @@ export default function ProductDetailModal() {
   return (
 
     <div className="bg-white border dark:bg-gray-900 rounded-lg w-full overflow-hidden grid grid-cols-1 md:grid-cols-2">
-      <div className="flex flex-col md:flex-row">
+      <div className="flex flex-col-reverse md:flex-row">
         <div className="flex flex-row md:flex-col justify-start md:justify-center items-center space-x-2 md:space-x-0 md:space-y-6 p-5 bg-gray-100 dark:bg-gray-800">
           {mockProduct.images.map((src, idx) => (
             <button
