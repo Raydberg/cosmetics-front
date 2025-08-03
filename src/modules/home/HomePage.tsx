@@ -7,6 +7,7 @@ import { CustomCarousel } from "@/shared/components/custom-carousel"
 import { data_example } from "@/core/api/data-example"
 
 export const HomePage = () => {
+  
   return (
     <div>
       <CustomCarousel />

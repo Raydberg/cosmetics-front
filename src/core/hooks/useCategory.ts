@@ -4,6 +4,7 @@ import { db, DB_ID } from "../lib/appwrite"
 import { COLLECTIONS } from "../config/collections"
 import { Query } from "appwrite"
 import { CategorySchema } from "../zod/category-shemas"
+import { getErrorMessage } from "../utils/getErrorMessage"
 
 export const useCategory = () => {
     const [loading, setLoading] = useState<boolean>(false)
@@ -63,7 +64,7 @@ export const useCategory = () => {
             const result = await db.listDocuments(DB_ID, COLLECTIONS.CATEGORY, [
                 Query.equal('isActive', true)
             ])
-            console.log("Datow de appwrite ", result.documents)
+            // console.log("Datow de appwrite ", result.documents)
             const activeCategoriesData = result.documents.map(doc => {
                 const validation = CategorySchema.safeParse(doc)
                 return validation.data as CategoryInterface
@@ -74,8 +75,7 @@ export const useCategory = () => {
             return activeCategoriesData
 
         } catch (error) {
-            const errorMessage = error instanceof Error ? error.message : 'Error desconocido'
-
+            const errorMessage = getErrorMessage(error)
             setError(errorMessage)
             throw error;
         } finally {

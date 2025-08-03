@@ -13,6 +13,10 @@ export interface ProductInterface {
     isActive: boolean
     tags?: string[]
     brand?: string
-
+    $createdAt?: string
+    $updatedAt?: string
+    $collectionId?: string
+    $databaseId?: string
+    $permissions?: string[]
 }
-export type CreateProduct = Omit<ProductInterface, '$id'>
+export type CreateProduct = Omit<ProductInterface, '$id' | '$createdAt' | '$updatedAt' | '$collectionId' | '$databaseId' | '$permissions'>

@@ -1,9 +1,18 @@
-import { data_example } from "@/core/api/data-example"
+
+import { useProduct } from "@/core/hooks/useProduct"
 import { FilterProducts } from "@/shared/components/filter-products"
 import { ProductCard } from "@/shared/components/product-card"
 import { motion } from "framer-motion"
+import { useEffect } from "react"
 
 export const ProductPage = () => {
+  const { products, getActiveProducts } = useProduct()
+
+  useEffect(() => {
+    getActiveProducts()
+  }, [])
+
+
   const containerVariants = {
     hidden: { opacity: 0 },
     visible: {
@@ -34,8 +43,8 @@ export const ProductPage = () => {
           animate="visible"
         >
           {
-            data_example.map((product, index) => (
-              <motion.div key={index} variants={itemVariants} >
+            products.map((product) => (
+              <motion.div key={product.$id} variants={itemVariants} >
                 <ProductCard product={product} />
               </motion.div>
             ))
