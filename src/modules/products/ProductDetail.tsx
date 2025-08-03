@@ -68,13 +68,13 @@ export default function ProductDetailModal() {
             </motion.div>
           )}
 
-          <div className="relative h-96 md:h-[500px]">
+          <div className="relative aspect-square">
             <AnimatePresence mode="wait">
               <motion.img
                 key={currentImageIndex}
                 src={mockProduct.images[currentImageIndex]}
                 alt="product"
-                className="w-full h-full object-contain p-2 md:p-4 rounded-lg"
+                className="w-full h-full object-contain rounded-4xl p-2 md:p-4 "
                 initial={{ opacity: 0, scale: 0.8 }}
                 animate={{ opacity: 1, scale: 1 }}
                 exit={{ opacity: 0, scale: 0.8 }}
@@ -83,13 +83,13 @@ export default function ProductDetailModal() {
             </AnimatePresence>
             <button
               onClick={prevImage}
-              className="absolute left-2 top-1/2 -translate-y-1/2 p-1 bg-white/80 rounded-full backdrop-blur-sm hover:bg-white transition hidden md:block"
+              className="absolute cursor-pointer left-2 top-1/2 -translate-y-1/2 p-1 bg-white/80 rounded-full backdrop-blur-sm hover:bg-white transition hidden md:block"
             >
               <ChevronLeft className="w-5 h-5" />
             </button>
             <button
               onClick={nextImage}
-              className="absolute right-2 top-1/2 -translate-y-1/2 p-1 bg-white/80 rounded-full backdrop-blur-sm hover:bg-white transition hidden md:block"
+              className="absolute cursor-pointer right-2 top-1/2 -translate-y-1/2 p-1 bg-white/80 rounded-full backdrop-blur-sm hover:bg-white transition hidden md:block"
             >
               <ChevronRight className="w-5 h-5" />
             </button>
