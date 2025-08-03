@@ -7,6 +7,7 @@ import { ContactPage } from './modules/contact/ContactPage'
 import { PanelPage } from './modules/admin/PanelPage'
 import { LoginPage } from './modules/admin/auth/LoginPage'
 import { lazy } from 'react'
+import ProductDetail from './modules/products/ProductDetail'
 
 const AdminLayout = lazy(() => import("./shared/layouts/AdminLayout"))
 
@@ -18,6 +19,7 @@ export const appRouter = createBrowserRouter([
         children: [
             { index: true, element: <HomePage /> },
             { path: '/products', element: <ProductPage /> },
+            { path: '/detail', element: <ProductDetail /> },
             { path: '/contact', element: <ContactPage /> }
         ]
     },

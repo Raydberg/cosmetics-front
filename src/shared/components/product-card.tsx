@@ -34,7 +34,7 @@ export const ProductCard = ({
             whileHover={{ y: -8 }}
             className="group relative flex w-full flex-col overflow-hidden rounded-xl border border-gray-200 bg-white shadow-sm transition-all duration-300 hover:shadow-lg hover:shadow-purple-100/50 dark:border-gray-800 dark:bg-gray-900 dark:hover:shadow-purple-900/20"
         >
-            <Link to={''}>
+            <Link to={'/detail'}>
                 {organic && (
                     <motion.div
                         initial={{ scale: 0, rotate: -180 }}
