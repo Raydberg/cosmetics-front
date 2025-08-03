@@ -1,4 +1,4 @@
-export interface ProductModel {
+export interface ProductInterface {
     $id?: string
     name: string
     description: string
@@ -15,4 +15,4 @@ export interface ProductModel {
     brand?: string
 
 }
-export type CreateProduct = Omit<ProductModel, '$id'>
+export type CreateProduct = Omit<ProductInterface, '$id'>

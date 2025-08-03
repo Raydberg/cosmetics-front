@@ -1,66 +1,7 @@
 import { useState } from "react";
 import { COLECCTION_ID, db, DB_ID } from "../lib/appwrite";
-import type { CreateProduct } from "../interfaces/product.interface";
+import { data_example } from "../api/data-example";
 
-const data_example: CreateProduct[] = [
-    {
-        name: "Perfume Elegance",
-        description: "Fragancia exclusiva con notas florales y amaderadas. Perfecta para ocasiones especiales.",
-        price: 37.49,
-        originalPrice: 49.99,
-        discountPercentage: 25,
-        hasDiscount: true,
-        images: [
-            "https://raw.githubusercontent.com/stackzero-labs/ui/refs/heads/main/public/placeholders/essential-oil-01.jpg",
-            "https://images.unsplash.com/photo-1596462502278-27bfdc403348?w=400",
-            "https://images.unsplash.com/photo-1522335789203-aabd1fc54bc9?w=400",
-            "https://images.unsplash.com/photo-1541643600914-78b084683601?w=400"
-        ],
-        categoryId: "688ec2850036986cabbc",
-        stock: 25,
-        featured: true,
-        isActive: true,
-        brand: "Elegance Paris",
-        tags: ["fragancia", "floral", "amaderado", "lujo"]
-    },
-    {
-        name: "Crema Hidratante Premium",
-        description: "Hidratación profunda para todo tipo de piel. Fórmula con ingredientes naturales y vitamina E.",
-        price: 34.99,
-        originalPrice: 34.99,
-        discountPercentage: 0,
-        hasDiscount: false,
-        images: [
-            "https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=400",
-            "https://images.unsplash.com/photo-1522335789203-aabd1fc54bc9?w=400"
-        ],
-        categoryId: "688ec2850036986cabbc",
-        stock: 15,
-        featured: false,
-        isActive: true,
-        brand: "SkinCare Pro",
-        tags: ["hidratante", "natural", "vitamina-e"]
-    },
-    {
-        name: "Set de Maquillaje Completo",
-        description: "Kit completo con base, rubor, sombras y labial. Ideal para maquillaje profesional.",
-        price: 89.99,
-        originalPrice: 129.99,
-        discountPercentage: 31,
-        hasDiscount: true,
-        images: [
-            "https://images.unsplash.com/photo-1522335789203-aabd1fc54bc9?w=400",
-            "https://images.unsplash.com/photo-1596462502278-27bfdc403348?w=400",
-            "https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=400"
-        ],
-        categoryId: "688ec2850036986cabbc",
-        stock: 8,
-        featured: true,
-        isActive: true,
-        brand: "MakeUp Pro",
-        tags: ["maquillaje", "profesional", "kit", "completo"]
-    }
-]
 
 export const useDatabase = () => {
     const [loading, setLoading] = useState<boolean>(false)

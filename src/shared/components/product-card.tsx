@@ -3,39 +3,28 @@ import ImageViewer from "./image-viewer";
 import PriceFormat_Sale from "./price-format-sale";
 import { motion } from "framer-motion";
 import { Link } from "react-router";
-
-const DEFAULT_IMAGE_URL =
-    "https://raw.githubusercontent.com/stackzero-labs/ui/refs/heads/main/public/placeholders/essential-oil-01.jpg";
+import type { ProductInterface } from "@/core/interfaces/product.interface";
+import { cn } from "@/core/lib/utils";
 
 export interface ProductCard {
-    imageUrl?: string;
-    organic?: boolean;
-    productName?: string;
-    description?: string;
-    price?: number;
-    originalPrice?: number;
-    currencyPrefix?: string;
+    className?: string
+    product: ProductInterface
 }
 
-export const ProductCard = ({
-    currencyPrefix = "$",
-    description = "Fragancia exclusiva con notas florales y amaderadas",
-    imageUrl = DEFAULT_IMAGE_URL,
-    organic = true,
-    originalPrice = 24.99,
-    price = 18.99,
-    productName = "Perfume Elegance",
-}: ProductCard) => {
+export const ProductCard = ({ product, className }: ProductCard) => {
     return (
         <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, ease: "easeOut" }}
             whileHover={{ y: -8 }}
-            className="group relative flex w-full flex-col overflow-hidden rounded-xl border border-gray-200 bg-white shadow-sm transition-all duration-300 hover:shadow-lg hover:shadow-purple-100/50 dark:border-gray-800 dark:bg-gray-900 dark:hover:shadow-purple-900/20"
+            className={cn(
+                "group relative flex w-full flex-col overflow-hidden rounded-xl border border-gray-200 bg-white shadow-sm transition-all duration-300 hover:shadow-lg hover:shadow-purple-100/50 dark:border-gray-800 dark:bg-gray-900 dark:hover:shadow-purple-900/20"
+                , className
+            )}
         >
             <Link to={'/detail'}>
-                {organic && (
+                {product?.hasDiscount && (
                     <motion.div
                         initial={{ scale: 0, rotate: -180 }}
                         animate={{ scale: 1, rotate: 0 }}
@@ -43,7 +32,7 @@ export const ProductCard = ({
                         className="absolute top-3 left-3 z-10"
                     >
                         <span className="relative inline-block rounded-full bg-gradient-to-r from-purple-500 to-indigo-700 px-3 py-1.5 text-xs font-semibold text-white">
-                            15% OFF
+                            {product?.discountPercentage}% OFF
                             <motion.span
                                 className="absolute -top-1 -right-1 flex h-3 w-3"
                                 animate={{ scale: [1, 1.2, 1] }}
@@ -79,16 +68,25 @@ export const ProductCard = ({
                             transition: { duration: 0.3 }
                         }}
                     >
-                        <ImageViewer
-                            imageUrl={imageUrl}
-                            classNameThumbnailViewer="rounded-lg object-contain h-[180px] mx-auto drop-shadow-lg"
-                        />
+                        {
+                            product?.images ? (
+
+                                <ImageViewer
+                                    imageUrl={product?.images[0]}
+                                    classNameThumbnailViewer="rounded-lg object-contain h-[180px] mx-auto drop-shadow-lg"
+                                />
+                            ) :
+                                <ImageViewer
+                                    imageUrl="https://media.istockphoto.com/id/1147544807/vector/thumbnail-image-vector-graphic.jpg?s=612x612&w=0&k=20&c=rnCKVbdxqkjlcs3xH87-9gocETqpspHFXu5dIGB4wuM="
+                                    classNameThumbnailViewer="rounded-lg object-contain h-[180px] mx-auto drop-shadow-lg"
+                                />
+                        }
                     </motion.div>
 
 
                 </div>
 
-                {/* Contenido del producto */}
+
                 <motion.div
                     className="flex flex-1 flex-col gap-3 p-5"
                     initial={{ opacity: 0 }}
@@ -100,7 +98,7 @@ export const ProductCard = ({
                         transition={{ duration: 0.2 }}
                     >
                         <h3 className="mb-1 text-xl font-semibold tracking-tight text-gray-900 dark:text-gray-100">
-                            {productName}
+                            {product?.name}
                         </h3>
                     </motion.div>
 
@@ -110,32 +108,46 @@ export const ProductCard = ({
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ delay: 0.4, duration: 0.3 }}
                     >
-                        {description}
+                        {product?.description}
                     </motion.p>
 
                     <motion.div
-                        className="mt-auto"
+                        className="mt-auto flex justify-between"
                         initial={{ opacity: 0, y: 10 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ delay: 0.5, duration: 0.3 }}
                     >
-                        <PriceFormat_Sale
-                            prefix={currencyPrefix}
-                            originalPrice={originalPrice}
-                            salePrice={price}
-                            showSavePercentage={false}
-                            className="text-lg font-semibold text-gray-600 dark:text-gray-300"
-                            classNameSalePrice="text-2xl font-bold text-purple-600 dark:text-purple-400"
-                        />
+                        {product?.hasDiscount ? (
+                            <PriceFormat_Sale
+                                prefix="S/."
+                                originalPrice={product.originalPrice ?? 0}
+                                salePrice={product.price}
+                                showSavePercentage={false}
+                                className="text-lg font-semibold text-gray-600 dark:text-gray-300"
+                                classNameSalePrice="text-2xl font-bold text-purple-600 dark:text-purple-400"
+                            />
+                        ) :
+                            (
+                                <PriceFormat_Sale
+                                    prefix="S/."
+                                    originalPrice={product?.originalPrice ?? 0}
+                                    showSavePercentage={false}
+                                    className="text-lg font-semibold text-gray-600 dark:text-gray-300"
+                                    classNameSalePrice="text-2xl font-bold text-purple-600 dark:text-purple-400"
+                                />
 
-                        <motion.p
-                            className="mt-1 inline-flex items-center text-sm text-green-600 dark:text-green-400"
-                            whileHover={{ scale: 1.05 }}
-                            transition={{ duration: 0.2 }}
-                        >
-                            <Tag size={14} className="mr-1" />
-                            15%
-                        </motion.p>
+                            )
+                        }
+                        {product?.hasDiscount && (
+                            <motion.p
+                                className="mt-1 inline-flex items-center text-sm text-green-600 dark:text-green-400"
+                                whileHover={{ scale: 1.05 }}
+                                transition={{ duration: 0.2 }}
+                            >
+                                <Tag size={14} className="mr-1" />
+                                {product.discountPercentage}%
+                            </motion.p>
+                        )}
                     </motion.div>
                 </motion.div>
 
