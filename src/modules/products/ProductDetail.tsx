@@ -1,38 +1,39 @@
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Badge } from '@/shared/components/ui/badge';
-import { Button } from '@/shared/components/ui/button';
-import { Separator } from '@/shared/components/ui/separator';
+
 import {
   ChevronLeft,
   ChevronRight
 } from 'lucide-react';
+import PriceFormat_Sale from '@/shared/components/price-format-sale';
 
 
 const mockProduct = {
-  name: 'Perfume Elegance Premium',
-  brand: 'LuxuryScents',
-  price: 299.99,
-  originalPrice: 399.99,
+  name: "Perfume Elegance",
+  description: "Fragancia exclusiva con notas florales y amaderadas. Perfecta para ocasiones especiales.",
+  price: 37.49,
+  originalPrice: 49.99,
   discountPercentage: 25,
-  rating: 4.5,
-  reviewCount: 234,
-  stock: 15,
-  description: 'Un perfume sofisticado y elegante que combina notas florales y frutales con un toque de almizcle. Perfecto para ocasiones especiales y uso diario. Larga duración y proyección excepcional.',
+  hasDiscount: true,
   images: [
-    'https://images.unsplash.com/photo-1592945403244-b3fbafd7f539?w=500&h=500&fit=crop',
-    'https://images.unsplash.com/photo-1563170351-be82bc888aa4?w=500&h=500&fit=crop',
-    'https://images.unsplash.com/photo-1541643600914-78b084683601?w=500&h=500&fit=crop'
+    "https://raw.githubusercontent.com/stackzero-labs/ui/refs/heads/main/public/placeholders/essential-oil-01.jpg",
+    "https://images.unsplash.com/photo-1596462502278-27bfdc403348?w=400",
+    "https://images.unsplash.com/photo-1522335789203-aabd1fc54bc9?w=400",
+    "https://images.unsplash.com/photo-1541643600914-78b084683601?w=400"
   ],
-  colors: ['Rosa', 'Dorado', 'Transparente'],
-  sizes: ['30ml', '50ml', '100ml'],
-  tags: ['Perfume', 'Lujo', 'Floral', 'Larga Duración', 'Unisex']
-};
+  categoryId: "688ec2850036986cabbc",
+  stock: 25,
+  featured: true,
+  isActive: true,
+  brand: "Elegance Paris",
+  tags: ["fragancia", "floral", "amaderado", "lujo"]
+}
 
 export default function ProductDetailModal() {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
-  const [selectedColor, setSelectedColor] = useState(0);
-  const [selectedSize, setSelectedSize] = useState(0);
+  // const [selectedColor, setSelectedColor] = useState(0);
+  // const [selectedSize, setSelectedSize] = useState(0);
 
   const prevImage = () => setCurrentImageIndex(i => i === 0 ? mockProduct.images.length - 1 : i - 1);
   const nextImage = () => setCurrentImageIndex(i => i === mockProduct.images.length - 1 ? 0 : i + 1);
@@ -55,7 +56,7 @@ export default function ProductDetailModal() {
           ))}
         </div>
         <div className="relative flex-1 bg-gradient-to-br from-purple-50 to-indigo-50 dark:from-purple-900/20 dark:to-indigo-900/20">
-          {mockProduct.discountPercentage && (
+          {mockProduct.hasDiscount && (
             <motion.div
               className="absolute top-2 left-2 z-10"
               initial={{ scale: 0 }}
@@ -110,64 +111,37 @@ export default function ProductDetailModal() {
         </div>
 
         <div className="flex items-baseline gap-2 mt-2">
-          <span className="text-xl sm:text-2xl font-bold text-purple-600">
+          {/* <span className="text-xl sm:text-2xl font-bold text-purple-600">
             ${mockProduct.price}
           </span>
           <span className="text-sm sm:text-base text-gray-500 line-through">
             ${mockProduct.originalPrice}
-          </span>
+          </span> */}
+
+          {mockProduct.hasDiscount ? (
+            <PriceFormat_Sale
+              prefix="S/."
+              originalPrice={mockProduct.originalPrice}
+              salePrice={mockProduct.price}
+              showSavePercentage={false}
+              className="text-lg font-semibold text-gray-600 dark:text-gray-300"
+              classNameSalePrice="text-2xl font-bold text-purple-600 dark:text-purple-400"
+            />
+          ) :
+            (
+              <PriceFormat_Sale
+                prefix="S/."
+                originalPrice={mockProduct.originalPrice}
+                showSavePercentage={false}
+                className="text-lg font-semibold text-gray-600 dark:text-gray-300"
+                classNameSalePrice="text-2xl font-bold text-purple-600 dark:text-purple-400"
+              />
+            )}
         </div>
 
         <p className="text-sm sm:text-base text-gray-600 dark:text-gray-400 mt-2 flex-1">
           {mockProduct.description}
         </p>
-
-        <Separator className="my-3" />
-
-        <div className="space-y-3">
-          {/* Color */}
-          <div>
-            <h4 className="text-sm font-semibold mb-1">Color:</h4>
-            <div className="flex gap-2 flex-wrap">
-              {mockProduct.colors.map((c, i) => (
-                <Button
-                  key={i}
-                  size="sm"
-                  variant={selectedColor === i ? 'outline' : 'ghost'}
-                  onClick={() => setSelectedColor(i)}
-                  className={
-                    selectedColor === i ? 'border-purple-500 text-purple-700' : ''
-                  }
-                >
-                  {c}
-                </Button>
-              ))}
-            </div>
-          </div>
-
-          {/* Tamaño */}
-          <div>
-            <h4 className="text-sm font-semibold mb-1">Tamaño:</h4>
-            <div className="flex gap-2 flex-wrap">
-              {mockProduct.sizes.map((s, i) => (
-                <Button
-                  key={i}
-                  size="sm"
-                  variant={selectedSize === i ? 'outline' : 'ghost'}
-                  onClick={() => setSelectedSize(i)}
-                  className={
-                    selectedSize === i ? 'border-purple-500 text-purple-700' : ''
-                  }
-                >
-                  {s}
-                </Button>
-              ))}
-            </div>
-          </div>
-
-        </div>
-
-        <Separator className="my-3" />
 
         <div className="flex flex-wrap gap-1 mt-3">
           {mockProduct.tags.map((t, i) => (
