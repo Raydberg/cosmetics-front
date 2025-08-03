@@ -1,6 +1,7 @@
 import { useState } from "react";
-import { COLECCTION_ID, db, DB_ID } from "../lib/appwrite";
+import {  db, DB_ID } from "../lib/appwrite";
 import { data_example } from "../api/data-example";
+import { COLLECTIONS } from "../config/collections";
 
 
 export const useDatabase = () => {
@@ -15,7 +16,7 @@ export const useDatabase = () => {
 
         try {
             console.log('🔍 Verificando configuración...')
-            const result = await db.listDocuments(DB_ID, COLECCTION_ID)
+            const result = await db.listDocuments(DB_ID, COLLECTIONS.PRODUCT)
             console.log('✅ Colección productos encontrada. Documentos existentes:', result.total)
             setSuccess(`✅ Configuración correcta. Colección productos existe con ${result.total} documentos.`)
         } catch (error) {
@@ -40,7 +41,7 @@ export const useDatabase = () => {
                 console.log(`📝 Creando producto: ${data.name}`)
                 console.log(`💰 Precio: $${data.price} ${data.hasDiscount ? `(${data.discountPercentage}% OFF)` : ''}`)
 
-                const result = await db.createDocument(DB_ID, COLECCTION_ID, 'unique()', data)
+                const result = await db.createDocument(DB_ID, COLLECTIONS.PRODUCT, 'unique()', data)
                 results.push(result)
                 console.log(`✅ Producto creado: ${data.name} (ID: ${result.$id})`)
             }
@@ -58,7 +59,7 @@ export const useDatabase = () => {
 
     const getProductsWithCategories = async () => {
         try {
-            const result = await db.listDocuments(DB_ID, COLECCTION_ID)
+            const result = await db.listDocuments(DB_ID, COLLECTIONS.PRODUCT)
             console.log('📦 Productos obtenidos:', result.documents)
             return result.documents
         } catch (error) {
