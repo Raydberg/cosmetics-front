@@ -3,14 +3,12 @@ import { Button } from "@/shared/components/ui/button"
 import { ArrowRight } from "lucide-react"
 import { Link } from "react-router"
 import { CategorySection } from "../categories/CategorySection"
-import { CustomCarousel } from "@/shared/components/custom-carousel"
 import { data_example } from "@/core/api/data-example"
 
 export const HomePage = () => {
-  
+
   return (
     <div>
-      <CustomCarousel />
       <section className=" flex flex-col items-center ">
         <h1 className="font-bold text-2xl">Nuestras Categorias</h1>
         <CategorySection />

@@ -6,7 +6,7 @@ import { Button } from "./ui/button"
 const slides = [
     {
         id: 1,
-        title: "Productos de Belleza Premium",
+        title: "Productos de Belleza",
         subtitle: "Descubre nuestra colección exclusiva",
         image: "https://images.unsplash.com/photo-1596462502278-27bfdc403348?w=1200&h=400&fit=crop",
         gradient: "from-purple-600/80 to-pink-600/80"
@@ -31,13 +31,12 @@ export const CustomCarousel = () => {
     const [currentSlide, setCurrentSlide] = useState(0)
     const [isAutoPlaying, setIsAutoPlaying] = useState(true)
 
-    // Auto-play functionality
     useEffect(() => {
         if (!isAutoPlaying) return
 
         const interval = setInterval(() => {
             setCurrentSlide((prev) => (prev + 1) % slides.length)
-        }, 4000) // Cambia cada 4 segundos
+        }, 4000)
 
         return () => clearInterval(interval)
     }, [isAutoPlaying])
@@ -55,8 +54,8 @@ export const CustomCarousel = () => {
     }
 
     return (
-        <div 
-            className="relative w-full h-80 lg:h-96 overflow-hidden bg-gray-900"
+        <div
+            className="relative w-full h-80 lg:h-96 overflow-hidden  bg-gray-900"
             onMouseEnter={() => setIsAutoPlaying(false)}
             onMouseLeave={() => setIsAutoPlaying(true)}
         >
@@ -69,17 +68,14 @@ export const CustomCarousel = () => {
                     transition={{ duration: 0.5, ease: "easeInOut" }}
                     className="relative w-full h-full"
                 >
-                    {/* Imagen de fondo */}
                     <img
                         src={slides[currentSlide].image}
                         alt={slides[currentSlide].title}
                         className="absolute inset-0 w-full h-full object-cover"
                     />
-                    
-                    {/* Overlay con gradiente */}
+
                     <div className={`absolute inset-0 bg-gradient-to-r ${slides[currentSlide].gradient}`} />
-                    
-                    {/* Contenido */}
+
                     <div className="relative z-10 flex items-center justify-center h-full text-center text-white px-6">
                         <div className="max-w-4xl">
                             <motion.h1
@@ -103,7 +99,7 @@ export const CustomCarousel = () => {
                                 animate={{ y: 0, opacity: 1 }}
                                 transition={{ delay: 0.6, duration: 0.6 }}
                             >
-                                <Button size="lg" className="bg-white text-gray-900 hover:bg-gray-100">
+                                <Button size="lg" className="bg-white text-gray-900 hover:bg-gray-100 cursor-pointer">
                                     Ver Productos
                                 </Button>
                             </motion.div>
@@ -112,12 +108,11 @@ export const CustomCarousel = () => {
                 </motion.div>
             </AnimatePresence>
 
-            {/* Botones de navegación */}
             <Button
                 variant="outline"
                 size="icon"
                 onClick={prevSlide}
-                className="absolute left-4 top-1/2 transform -translate-y-1/2 z-20 bg-white/20 border-white/30 text-white hover:bg-white/30 backdrop-blur-sm"
+                className="absolute  cursor-pointer left-4 top-1/2 transform -translate-y-1/2 z-20 bg-white/20 border-white/30 text-white hover:bg-white/30 backdrop-blur-sm"
             >
                 <ChevronLeft size={20} />
                 <span className="sr-only">Anterior</span>
@@ -127,29 +122,26 @@ export const CustomCarousel = () => {
                 variant="outline"
                 size="icon"
                 onClick={nextSlide}
-                className="absolute right-4 top-1/2 transform -translate-y-1/2 z-20 bg-white/20 border-white/30 text-white hover:bg-white/30 backdrop-blur-sm"
+                className="absolute cursor-pointer right-4 top-1/2 transform -translate-y-1/2 z-20 bg-white/20 border-white/30 text-white hover:bg-white/30 backdrop-blur-sm"
             >
                 <ChevronRight size={20} />
                 <span className="sr-only">Siguiente</span>
             </Button>
 
-            {/* Indicadores de puntos */}
             <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 flex space-x-2 z-20">
                 {slides.map((_, index) => (
                     <button
                         key={index}
                         onClick={() => goToSlide(index)}
-                        className={`w-3 h-3 rounded-full transition-all duration-300 ${
-                            index === currentSlide
-                                ? 'bg-white scale-110'
-                                : 'bg-white/50 hover:bg-white/75'
-                        }`}
+                        className={`w-3 h-3 rounded-full transition-all duration-300 cursor-pointer ${index === currentSlide
+                            ? 'bg-white scale-110'
+                            : 'bg-white/50 hover:bg-white/75'
+                            }`}
                         aria-label={`Ir al slide ${index + 1}`}
                     />
                 ))}
             </div>
 
-            {/* Indicador de progreso */}
             <div className="absolute bottom-0 left-0 w-full h-1 bg-white/20">
                 <motion.div
                     className="h-full bg-white"
