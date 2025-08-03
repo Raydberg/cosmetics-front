@@ -1,18 +1,13 @@
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { AnimatePresence, motion } from 'framer-motion';
 import { ChevronDown } from "lucide-react";
 import { Checkbox } from "./ui/checkbox";
 import { Label } from "./ui/label";
-
-
-const filterItems = [
-    { id: "beauty", label: "Belleza", checked: false },
-    { id: "kids", label: "Niños", checked: true },
-    { id: "men", label: "Hombres", checked: true },
-    { id: "women", label: "Mujeres", checked: true }
-]
+import { useCategory } from "@/core/hooks/useCategory";
 
 export const FilterContent = () => {
+
+
     const [openSections, setOpenSections] = useState({
         categories: true,
         price: true
@@ -24,6 +19,12 @@ export const FilterContent = () => {
             [section]: !prev[section]
         }))
     }
+    const { getActiveCategories, categories } = useCategory()
+    useEffect(() => {
+        getActiveCategories()
+    }, [])
+
+ 
 
     return (
         <div className="space-y-6">
@@ -55,20 +56,20 @@ export const FilterContent = () => {
                             className="overflow-hidden"
                         >
                             <div className="space-y-3 pl-2">
-                                {filterItems.map((item, index) => (
+                                {categories.map((category, index) => (
                                     <motion.div
-                                        key={item.id}
+                                        key={category.$id}
                                         initial={{ x: -20, opacity: 0 }}
                                         animate={{ x: 0, opacity: 1 }}
                                         transition={{ delay: index * 0.1 }}
                                         className="flex items-center gap-3 p-2 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors"
                                     >
-                                        <Checkbox id={item.id} defaultChecked={item.checked} />
+                                        <Checkbox id={category.$id} onClick={() => alert(`Click ${category.$id}`)} />
                                         <Label
-                                            htmlFor={item.id}
+                                            htmlFor={category.$id}
                                             className="text-sm font-normal cursor-pointer hover:text-gray-900 dark:hover:text-gray-100 flex-1"
                                         >
-                                            {item.label}
+                                            {category.name}
                                         </Label>
                                     </motion.div>
                                 ))}
