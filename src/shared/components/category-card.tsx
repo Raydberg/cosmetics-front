@@ -16,7 +16,7 @@ export const CategoryCard = ({ category, href, className, ...props }: CategoryCa
                 className={cn("group relative block overflow-hidden rounded-xl transition ease-out active:opacity-75 w-64 h-40 sm:w-72 sm:h-48 shadow-lg hover:shadow-xl", className)}
                 {...props} >
                 <img
-                    src={category.image}
+                    src={category.image ?? ''}
                     alt="Product Image"
                     className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
                 />
