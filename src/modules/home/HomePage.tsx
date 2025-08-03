@@ -4,6 +4,7 @@ import { ArrowRight } from "lucide-react"
 import { Link } from "react-router"
 import { CategorySection } from "../categories/CategorySection"
 import { CustomCarousel } from "@/shared/components/custom-carousel"
+import { data_example } from "@/core/api/data-example"
 
 export const HomePage = () => {
   return (
@@ -17,10 +18,11 @@ export const HomePage = () => {
         <h1 className="font-bold text-2xl">Productos Destacados</h1>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 space-x-2">
-          <ProductCard />
-          <ProductCard />
-          <ProductCard />
-          <ProductCard />
+          {
+            data_example.map((product, index) => (
+              <ProductCard key={index} product={product} />
+            ))
+          }
         </div>
         <div>
           <Button>
