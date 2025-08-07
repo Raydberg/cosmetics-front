@@ -23,7 +23,7 @@ export const ProductCard = ({ product, className }: ProductCard) => {
                 , className
             )}
         >
-            <Link to={'/detail'}>
+            <Link to={`/products/${product.$id}`}>
                 {product?.hasDiscount && (
                     <motion.div
                         initial={{ scale: 0, rotate: -180 }}

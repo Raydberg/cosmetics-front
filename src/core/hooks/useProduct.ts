@@ -1,4 +1,4 @@
-import { useState } from "react"
+import { useCallback, useState } from "react"
 import type { ProductInterface } from "../interfaces/product.interface"
 import { db, DB_ID, Query } from "../lib/appwrite"
 import { COLLECTIONS } from "../config/collections"
@@ -13,7 +13,7 @@ export const useProduct = () => {
     const [products, setProducts] = useState<ProductInterface[]>([])
 
 
-    const getActiveProducts = async () => {
+    const getActiveProducts = useCallback(async () => {
         setLoading(true)
         setError(null)
 
@@ -36,10 +36,35 @@ export const useProduct = () => {
         } finally {
             setLoading(false)
         }
-    }
+    }, [])
+
+    const getProductById = useCallback(async (productId: string) => {
+        setLoading(true);
+        setError(null)
+        try {
+            console.log("Fetching product with ID", productId)
+
+            const result = await db.getDocument(DB_ID, COLLECTIONS.PRODUCT, productId)
+            console.log("Raw result form appwrite", result)
+            const validation = ProductSchema.safeParse(result)
+            console.log("Product validation successfull:", validation.data)
+            if (validation.success) {
+                return validation.data as ProductInterface
+            } else {
+                throw new Error("Datos de producto invalidos")
+            }
+        } catch (error) {
+            setError(getErrorMessage(error))
+            console.error("Error obteniendo producto:", error)
+            throw error;
+        } finally {
+            setLoading(false)
+        }
+    }, [])
+
     return {
         products, loading, error,
-        getActiveProducts
+        getActiveProducts,
+        getProductById
     }
-
 }
