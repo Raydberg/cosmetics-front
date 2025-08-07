@@ -1,6 +1,7 @@
 
 import { useProduct } from "@/core/hooks/useProduct"
 import { FilterProducts } from "@/shared/components/filter-products"
+import { InputSearch } from "@/shared/components/input-search"
 import { ProductCard } from "@/shared/components/product-card"
 import { motion } from "framer-motion"
 import { useEffect } from "react"
@@ -36,6 +37,7 @@ export const ProductPage = () => {
     <div className="flex">
       <FilterProducts />
       <div className="flex-1 min-h-screen">
+        <InputSearch />
         <motion.div
           className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 p-4 md:p-6"
           variants={containerVariants}
