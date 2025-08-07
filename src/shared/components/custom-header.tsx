@@ -14,7 +14,7 @@ interface NavItem {
 const navItems: NavItem[] = [
     { name: 'Inicio', href: '/' },
     { name: 'Products', href: '/products' },
-    { name: 'Contacto', href: '/contact' },
+    // { name: 'Contacto', href: '/contact' },
 ];
 
 export const CustomHeader = () => {

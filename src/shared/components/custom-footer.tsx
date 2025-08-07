@@ -1,5 +1,16 @@
 import { Link } from "react-router"
 
+
+interface LinkProps {
+    name: string,
+    href: string
+}
+
+const links: LinkProps[] = [
+    { name: "Inicio", href: "/" },
+    { name: "Productos", href: "/products" },
+]
+
 export const CustomFooter = () => {
     const currentYear = new Date().getFullYear()
     return (
@@ -22,16 +33,13 @@ export const CustomFooter = () => {
                             Enlaces
                         </h2>
                         <ul className="text-gray-500 dark:text-gray-400 font-medium">
-                            <li className="mb-4">
-                                <Link to={'/'} className="hover:underline">Inicio</Link>
-                            </li>
-                            <li className="mb-4">
-                                <Link to={'/products'} className="hover:underline">Productos</Link>
-                            </li>
-                            <li className="mb-4">
-                                <Link to={'/contact'} className="hover:underline">Contacto</Link>
-                            </li>
-
+                            {links.map(({ name, href }, i) => (
+                                <li key={i} className="mb-4">
+                                    <Link to={`${href}`} className="hover:underline">
+                                        {name}
+                                    </Link>
+                                </li>
+                            ))}
                         </ul>
                     </div>
                     <div >
@@ -39,15 +47,15 @@ export const CustomFooter = () => {
                             Contacto
                         </h2>
                         <ul className="text-gray-500 dark:text-gray-400 font-medium">
-                            <li className="mb-4">
+                            {/* <li className="mb-4">
                                 Calle Principal 123
                                 Ciudad, País
+                            </li> */}
+                            <li className="mb-4">
+                                Email: fiestascordovabelenlourdes@gmail.com
                             </li>
                             <li className="mb-4">
-                                Email: info@catalogoelegante.com
-                            </li>
-                            <li className="mb-4">
-                                Teléfono: +1 234 567 890
+                                Teléfono: 935 614 471
                             </li>
                         </ul>
                     </div>
