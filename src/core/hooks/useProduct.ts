@@ -10,6 +10,7 @@ interface FilterOptions {
     categoryIds?: string[],
     priceRanges?: string[],
     searchQuery?: string
+    priceSlider?: [number, number]
 }
 
 export const useProduct = () => {
@@ -65,6 +66,13 @@ export const useProduct = () => {
                 const validation = ProductSchema.safeParse(doc)
                 return validation.data as ProductInterface
             })
+
+            if (filters.priceSlider && (filters.priceSlider[0] > 0 || filters.priceSlider[1] < 800)) {
+                const [minPrice, maxPrice] = filters.priceSlider
+                filteredProducts = filteredProducts.filter(product =>
+                    product.price >= minPrice && product.price <= maxPrice
+                )
+            }
 
             if (filters.priceRanges && filters.priceRanges.length > 0) {
                 filteredProducts = filteredProducts.filter(product => {

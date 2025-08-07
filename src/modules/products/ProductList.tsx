@@ -12,7 +12,8 @@ export const ProductList = () => {
         if (hasActiveFilters) {
             getFilteredProducts({
                 categoryIds: filters.selectCategories,
-                priceRanges: filters.priceRange
+                priceRanges: filters.priceRange,
+                priceSlider:filters.priceSlider
             })
         } else {
             getActiveProducts()

@@ -5,14 +5,17 @@ import { Checkbox } from "./ui/checkbox";
 import { Label } from "./ui/label";
 import { useCategory } from "@/core/hooks/useCategory";
 import { useFilters } from "@/core/hooks/useFilters";
+import { Slider } from "./ui/slider";
 
 export const FilterContent = () => {
 
 
     const [openSections, setOpenSections] = useState({
         categories: true,
-        price: true
+        price: true,
+        priceSlider: true
     })
+    const [localSliderValue, setLocalSliderValue] = useState<[number, number]>([0, 100])
 
     const toggleSection = (section: keyof typeof openSections) => {
         setOpenSections(prev => ({
@@ -21,12 +24,20 @@ export const FilterContent = () => {
         }))
     }
     const { getActiveCategories, categories } = useCategory()
-    const { filters, toggleCategory, togglePriceRange } = useFilters()
+    const { filters, toggleCategory, togglePriceRange ,setPriceSlider} = useFilters()
     useEffect(() => {
         getActiveCategories()
     }, [])
 
+    // ✅ Sincronizar el slider local con el estado global
+    useEffect(() => {
+        setLocalSliderValue(filters.priceSlider)
+    }, [filters.priceSlider])
 
+    // ✅ Función que se llama cuando se suelta el slider
+    const handleSliderCommit = (value: number[]) => {
+        setPriceSlider(value as [number, number])
+    }
 
     return (
         <div className="space-y-6">
@@ -89,7 +100,63 @@ export const FilterContent = () => {
                     )}
                 </AnimatePresence>
             </div>
+ <div>
+                <motion.button
+                    onClick={() => toggleSection('priceSlider')}
+                    className="flex items-center justify-between w-full text-left mb-3 p-2 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors"
+                    whileHover={{ scale: 1.02 }}
+                    whileTap={{ scale: 0.98 }}
+                >
+                    <h4 className="text-sm font-semibold text-gray-900 dark:text-gray-100">
+                        Rango de Precio
+                        {(filters.priceSlider[0] > 0 || filters.priceSlider[1] < 100) && (
+                            <span className="ml-2 px-2 py-1 text-xs bg-purple-100 text-purple-800 rounded-full">
+                                ${filters.priceSlider[0]} - ${filters.priceSlider[1]}
+                            </span>
+                        )}
+                    </h4>
+                    <motion.div
+                        animate={{ rotate: openSections.priceSlider ? 180 : 0 }}
+                        transition={{ duration: 0.2 }}
+                    >
+                        <ChevronDown size={16} />
+                    </motion.div>
+                </motion.button>
 
+                <AnimatePresence>
+                    {openSections.priceSlider && (
+                        <motion.div
+                            initial={{ height: 0, opacity: 0 }}
+                            animate={{ height: "auto", opacity: 1 }}
+                            exit={{ height: 0, opacity: 0 }}
+                            transition={{ duration: 0.3 }}
+                            className="overflow-hidden"
+                        >
+                            <div className="space-y-4 pl-2 pr-2">
+                                <div className="flex justify-between text-sm text-gray-600 dark:text-gray-400">
+                                    <span>S/.{localSliderValue[0]}</span>
+                                    <span>S/.{localSliderValue[1]}</span>
+                                </div>
+                                
+                                <Slider
+                                    value={localSliderValue}
+                                    onValueChange={(value) => setLocalSliderValue(value as [number, number])}
+                                    onValueCommit={handleSliderCommit}
+                                    max={100}
+                                    min={0}
+                                    step={1}
+                                    className="w-full"
+                                />
+                                
+                                <div className="flex justify-between text-xs text-gray-500 dark:text-gray-500">
+                                    <span>S/.0</span>
+                                    <span>S/.800</span>
+                                </div>
+                            </div>
+                        </motion.div>
+                    )}
+                </AnimatePresence>
+            </div>
             <div>
                 <motion.button
                     onClick={() => toggleSection('price')}

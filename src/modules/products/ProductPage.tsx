@@ -1,13 +1,7 @@
 
 import { useFilters } from "@/core/hooks/useFilters"
-import { useProduct } from "@/core/hooks/useProduct"
-import { FilterProvider } from "@/core/providers/filter-provider"
 import { FilterProducts } from "@/shared/components/filter-products"
-import { InputSearch } from "@/shared/components/input-search"
-import { ProductCard } from "@/shared/components/product-card"
 import { Button } from "@/shared/components/ui/button"
-import { motion } from "framer-motion"
-import { useEffect } from "react"
 import { ProductList } from "./ProductList"
 import { X } from "lucide-react"
 
@@ -23,8 +17,8 @@ const ProductsContent = () => {
                     Productos
                 </h1>
                 {hasActiveFilters && (
-                    <Button 
-                        variant="outline" 
+                    <Button
+                        variant="outline"
                         onClick={clearFilters}
                         className="flex items-center gap-2"
                     >
@@ -33,7 +27,7 @@ const ProductsContent = () => {
                     </Button>
                 )}
             </div>
-            
+
             <div className="flex gap-8">
                 <FilterProducts />
                 <div className="flex-1">
@@ -46,9 +40,7 @@ const ProductsContent = () => {
 
 export const ProductPage = () => {
     return (
-        <FilterProvider>
-            <ProductsContent />
-        </FilterProvider>
+        <ProductsContent />
     )
 }
 

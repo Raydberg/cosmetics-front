@@ -2,7 +2,8 @@ import { createContext } from "react"
 
 export interface FilterState {
      selectCategories: string[],
-     priceRange: [number]
+     priceRange: string[],
+     priceSlider: [number, number]
 }
 
 interface FilterContextType {
@@ -10,6 +11,7 @@ interface FilterContextType {
      toggleCategory: (categoryId: string) => void
      togglePriceRange: (priceId: string) => void
      clearFilters: () => void
+     setPriceSlider: (range: [number, number]) => void
      hasActiveFilters: boolean
 }
 

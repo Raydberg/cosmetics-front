@@ -8,7 +8,8 @@ interface FilterProviderProps {
 export const FilterProvider = ({ children }: FilterProviderProps) => {
     const [filters, setFilters] = useState<FilterState>({
         selectCategories: [],
-        priceRange: []
+        priceRange: [],
+        priceSlider: [0, 800]
     })
 
 
@@ -27,10 +28,16 @@ export const FilterProvider = ({ children }: FilterProviderProps) => {
                 [...prev.priceRange, priceId]
         }))
     }
+    const setPriceSlider = (range: [number, number]) => {
+        setFilters(prev => ({
+            ...prev, priceSlider: range
+        }))
+    }
     const clearFilters = () => {
         setFilters({
             selectCategories: [],
-            priceRange: []
+            priceRange: [],
+            priceSlider: [0, 800]
         })
     }
 
@@ -42,7 +49,8 @@ export const FilterProvider = ({ children }: FilterProviderProps) => {
             toggleCategory,
             togglePriceRange,
             clearFilters,
-            hasActiveFilters
+            hasActiveFilters,
+            setPriceSlider
         }}>
             {children}
         </FilterContext.Provider>
