@@ -13,7 +13,8 @@ export const ProductList = () => {
             getFilteredProducts({
                 categoryIds: filters.selectCategories,
                 priceRanges: filters.priceRange,
-                priceSlider:filters.priceSlider
+                priceSlider:filters.priceSlider,
+                searchQuery:filters.searchQuery
             })
         } else {
             getActiveProducts()

@@ -186,9 +186,9 @@ export const FilterContent = () => {
                         >
                             <div className="space-y-3 pl-2">
                                 {[
-                                    { id: "price1", label: "Menos de $20" },
-                                    { id: "price2", label: "$20 - $50" },
-                                    { id: "price3", label: "Más de $50" }
+                                    { id: "price1", label: "Menos de S./20" },
+                                    { id: "price2", label: "S./20 - S./50" },
+                                    { id: "price3", label: "Más de S./50" }
                                 ].map((item, index) => (
                                     <motion.div
                                         key={item.id}

@@ -91,14 +91,21 @@ export const useProduct = () => {
                 })
             }
 
-            if (filters.searchQuery && filters.searchQuery.trim() !== '') {
-                const searchTerm = filters.searchQuery.toLowerCase()
-                filteredProducts = filteredProducts.filter(product =>
-                    product.name.toLowerCase().includes(searchTerm) ||
-                    product.description.toLowerCase().includes(searchTerm) ||
-                    product.tags?.some(tag => tag.toLowerCase().includes(searchTerm))
-                )
-            }
+        if (filters.searchQuery && filters.searchQuery.trim() !== '') {
+            const searchTerm = filters.searchQuery.toLowerCase().trim()
+            filteredProducts = filteredProducts.filter(product => {
+                const matchesName = product.name.toLowerCase().includes(searchTerm)
+                const matchesDescription = product.description.toLowerCase().includes(searchTerm)
+                const matchesBrand = product.brand?.toLowerCase().includes(searchTerm) || false
+                const matchesTags = product.tags?.some(tag => 
+                    tag.toLowerCase().includes(searchTerm)
+                ) || false
+                
+                return matchesName || matchesDescription || matchesBrand || matchesTags
+            })
+        }
+
+        
             setProducts(filteredProducts)
             return filteredProducts;
 

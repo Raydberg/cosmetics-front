@@ -4,6 +4,7 @@ export interface FilterState {
      selectCategories: string[],
      priceRange: string[],
      priceSlider: [number, number]
+     searchQuery: string
 }
 
 interface FilterContextType {
@@ -12,6 +13,7 @@ interface FilterContextType {
      togglePriceRange: (priceId: string) => void
      clearFilters: () => void
      setPriceSlider: (range: [number, number]) => void
+     setSearchQuery: (query: string) => void
      hasActiveFilters: boolean
 }
 
