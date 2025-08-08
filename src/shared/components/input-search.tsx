@@ -1,4 +1,4 @@
-import {  useCallback, useEffect, useState, useRef, Fragment } from "react"
+import { useCallback, useEffect, useState, useRef, Fragment } from "react"
 import { Input } from "./ui/input"
 import { Button } from "./ui/button"
 import { Search, X } from "lucide-react"
@@ -20,8 +20,8 @@ interface InputSearchProps {
     debounceDelay?: number
 }
 
-export const InputSearch = ({ 
-    onSearch, 
+export const InputSearch = ({
+    onSearch,
     className = "w-full max-w-2xl mx-auto",
     enableRealTimeSearch = true,
     debounceDelay = 500
@@ -40,31 +40,26 @@ export const InputSearch = ({
 
     const searchValue = form.watch("input")
 
-    // ✅ Función optimizada para realizar búsqueda
     const performSearch = useCallback((query: string) => {
         const trimmedQuery = query?.trim() || ""
-        
-        // ✅ Evitar búsquedas duplicadas
+
         if (trimmedQuery === lastSearchRef.current) {
             return
         }
-        
+
         lastSearchRef.current = trimmedQuery
-        
+
         console.log(`🔍 Performing search: "${trimmedQuery}"`)
-        
+
         if (onSearch) {
             onSearch(trimmedQuery)
         }
         setSearchQuery(trimmedQuery)
     }, [onSearch, setSearchQuery])
 
-    // ✅ Debounce optimizado
     const [debouncedSearch, cancelDebounce] = useDebounce(performSearch, debounceDelay)
 
-    // ✅ Efecto para búsqueda en tiempo real
     useEffect(() => {
-        // Evitar búsqueda en el primer render
         if (isInitialRender.current) {
             isInitialRender.current = false
             return
@@ -75,26 +70,25 @@ export const InputSearch = ({
             debouncedSearch(searchValue)
         }
 
-        // Cleanup para cancelar búsquedas pendientes
+
         return () => {
             cancelDebounce()
         }
     }, [searchValue, debouncedSearch, enableRealTimeSearch, cancelDebounce])
 
-    // ✅ Submit manual (Enter o botón)
+
     const onSubmit = (values: z.infer<typeof formSchema>) => {
         setIsSearching(true)
-        
-        // Cancelar búsqueda debounced pendiente
+
+
         cancelDebounce()
-        
-        // Realizar búsqueda inmediata
+
+
         performSearch(values.input || "")
-        
+
         setTimeout(() => setIsSearching(false), 300)
     }
 
-    // ✅ Limpiar búsqueda
     const clearSearch = useCallback(() => {
         cancelDebounce()
         form.setValue("input", "")
@@ -102,7 +96,7 @@ export const InputSearch = ({
         performSearch("")
     }, [form, performSearch, cancelDebounce])
 
-    // ✅ Sincronizar con contexto global (solo cuando sea necesario)
+
     useEffect(() => {
         const currentInput = form.getValues("input") || ""
         if (filters.searchQuery !== currentInput && filters.searchQuery !== lastSearchRef.current) {
@@ -131,12 +125,12 @@ export const InputSearch = ({
                                             <Search size={20} className="text-gray-400 dark:text-gray-500" />
                                         )}
                                     </div>
-                                    
+
                                     <FormControl>
                                         <Input
                                             {...field}
-                                            type="search" 
-                                            id="default-search" 
+                                            type="search"
+                                            id="default-search"
                                             autoComplete="off"
                                             className="
                                                 block w-full pl-10 pr-20 py-3 text-sm 
@@ -151,7 +145,7 @@ export const InputSearch = ({
                                             placeholder={enableRealTimeSearch ? "Buscar productos..." : "Buscar productos (presiona Enter)"}
                                         />
                                     </FormControl>
-                                    
+
                                     <div className="absolute inset-y-0 right-0 flex items-center">
                                         {searchValue && (
                                             <Button
@@ -165,8 +159,8 @@ export const InputSearch = ({
                                                 <X size={16} />
                                             </Button>
                                         )}
-                                        
-                                        <Button 
+
+                                        <Button
                                             type="submit"
                                             disabled={isSearching}
                                             className="
@@ -192,21 +186,7 @@ export const InputSearch = ({
                                     </div>
                                 </div>
 
-                                {/* ✅ Indicador de estado de búsqueda */}
-                                {/* {enableRealTimeSearch && searchValue && searchValue.length > 0 && (
-                                    <div className="absolute top-full mt-1 left-0 right-0 z-10 pointer-events-none">
-                                        <div className="text-xs text-gray-500 dark:text-gray-400 bg-white dark:bg-gray-800 px-3 py-1 rounded-md shadow-sm border border-gray-200 dark:border-gray-700">
-                                            {isSearching ? (
-                                                <div className="flex items-center gap-2">
-                                                    <div className="animate-spin rounded-full h-3 w-3 border-b-2 border-purple-500"></div>
-                                                    Buscando...
-                                                </div>
-                                            ) : (
-                                                `Resultados para "${searchValue}"`
-                                            )}
-                                        </div>
-                                    </div>
-                                )} */}
+
                             </FormItem>
                         )}
                     />

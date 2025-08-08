@@ -16,7 +16,7 @@ export const CategorySection = () => {
                         {
                             categories.map((category) => (
                                 category.image && (
-                                    <CategoryCard category={category} key={category.$id} href="/style" />
+                                    <CategoryCard category={category} key={category.$id} />
                                 )
                             ))}
                     </div>

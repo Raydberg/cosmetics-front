@@ -65,12 +65,10 @@ export const FilterProducts = () => {
                             }}
                             className="md:hidden fixed bottom-0 left-0 right-0 z-50 bg-white dark:bg-gray-900 rounded-t-3xl shadow-2xl max-h-[85vh] overflow-hidden"
                         >
-                            {/* Handle indicator */}
                             <div className="flex justify-center py-3">
                                 <div className="w-12 h-1.5 bg-gray-300 dark:bg-gray-600 rounded-full" />
                             </div>
 
-                            {/* Header */}
                             <div className="flex items-center justify-between px-6 pb-4 border-b border-gray-200 dark:border-gray-700">
                                 <h3 className="text-xl font-bold text-gray-900 dark:text-gray-100">
                                     Filtros
@@ -85,7 +83,6 @@ export const FilterProducts = () => {
                                 </Button>
                             </div>
 
-                            {/* Content */}
                             <div className="overflow-y-auto max-h-[calc(85vh-8rem)] px-6 py-4">
                                 <FilterContent />
                             </div>

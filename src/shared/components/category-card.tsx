@@ -3,16 +3,15 @@ import { cn } from "@/core/lib/utils";
 import { Link } from "react-router";
 
 interface CategoryCardProps {
-    href: string
     category: CategoryInterface
     className?: string
 }
 
-export const CategoryCard = ({ category, href, className, ...props }: CategoryCardProps) => {
+export const CategoryCard = ({ category, className, ...props }: CategoryCardProps) => {
     return (
         <>
             <Link
-                to={href}
+                to={`/products?category=${category.$id}`}
                 className={cn("group relative block overflow-hidden rounded-xl transition ease-out active:opacity-75 w-64 h-40 sm:w-72 sm:h-48 shadow-lg hover:shadow-xl", className)}
                 {...props} >
                 <img

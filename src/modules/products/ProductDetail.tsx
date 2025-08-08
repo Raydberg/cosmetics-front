@@ -10,34 +10,13 @@ import PriceFormat_Sale from '@/shared/components/price-format-sale';
 import type { ProductInterface } from '@/core/interfaces/product.interface';
 
 
-// const product = {
-//   name: "Perfume Elegance",
-//   description: "Fragancia exclusiva con notas florales y amaderadas. Perfecta para ocasiones especiales.",
-//   price: 37.49,
-//   originalPrice: 49.99,
-//   discountPercentage: 25,
-//   hasDiscount: true,
-//   images: [
-//     "https://raw.githubusercontent.com/stackzero-labs/ui/refs/heads/main/public/placeholders/essential-oil-01.jpg",
-//     "https://images.unsplash.com/photo-1596462502278-27bfdc403348?w=400",
-//     "https://images.unsplash.com/photo-1522335789203-aabd1fc54bc9?w=400",
-//     "https://images.unsplash.com/photo-1541643600914-78b084683601?w=400"
-//   ],
-//   categoryId: "688ec2850036986cabbc",
-//   stock: 25,
-//   featured: true,
-//   isActive: true,
-//   brand: "Elegance Paris",
-//   tags: ["fragancia", "floral", "amaderado", "lujo"]
-// }
 interface ProductDetailProps {
   product?: ProductInterface
 }
 export default function ProductDetailModal({ product }: ProductDetailProps) {
 
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
-  // const [selectedColor, setSelectedColor] = useState(0);
-  // const [selectedSize, setSelectedSize] = useState(0);
+
 
   const prevImage = () => setCurrentImageIndex(i => i === 0 ? product!.images.length - 1 : i - 1);
   const nextImage = () => setCurrentImageIndex(i => i === product!.images.length - 1 ? 0 : i + 1);

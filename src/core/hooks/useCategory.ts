@@ -23,7 +23,7 @@ export const useCategory = () => {
                 return validation.data as CategoryInterface
             })
             setCategories(categoryData)
-            console.table(categoryData)
+            // console.table(categoryData)
             return categoryData;
         } catch (error) {
             const errorMessage = error instanceof Error ? error.message : "Error desconocido"
@@ -71,7 +71,7 @@ export const useCategory = () => {
             })
 
             setCategories(activeCategoriesData)
-            console.log(activeCategoriesData)
+            // console.log(activeCategoriesData)
             return activeCategoriesData
 
         } catch (error) {

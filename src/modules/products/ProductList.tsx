@@ -17,6 +17,7 @@ export const ProductList = () => {
                 searchQuery:filters.searchQuery
             })
         } else {
+            
             getActiveProducts()
         }
 

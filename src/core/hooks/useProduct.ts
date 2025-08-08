@@ -29,14 +29,14 @@ export const useProduct = () => {
             const result = await db.listDocuments(DB_ID, COLLECTIONS.PRODUCT, [
                 Query.equal('isActive', true)
             ])
-            console.log(result)
+            // console.log(result)
             const activeProductsData = result.documents.map(doc => {
                 const validation = ProductSchema.safeParse(doc)
                 return validation.data as ProductInterface
             })
 
             setProducts(activeProductsData)
-            console.log(activeProductsData)
+            // console.log(activeProductsData)
             return activeProductsData;
         } catch (error) {
             setError(getErrorMessage(error))
@@ -125,9 +125,7 @@ export const useProduct = () => {
             console.log("Fetching product with ID", productId)
 
             const result = await db.getDocument(DB_ID, COLLECTIONS.PRODUCT, productId)
-            console.log("Raw result form appwrite", result)
             const validation = ProductSchema.safeParse(result)
-            console.log("Product validation successfull:", validation.data)
             if (validation.success) {
                 return validation.data as ProductInterface
             } else {

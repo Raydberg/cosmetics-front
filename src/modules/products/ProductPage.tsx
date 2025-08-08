@@ -5,11 +5,28 @@ import { Button } from "@/shared/components/ui/button"
 import { ProductList } from "./ProductList"
 import { X } from "lucide-react"
 import { InputSearch } from "@/shared/components/input-search"
+import { useSearchParams } from "react-router"
+import { useEffect } from "react"
 
 
 
 const ProductsContent = () => {
-    const { clearFilters, hasActiveFilters, filters, setSearchQuery } = useFilters()
+    const { clearFilters, hasActiveFilters, filters, setSearchQuery, toggleCategory } = useFilters()
+
+    const [searchParams, setSearchParams] = useSearchParams()
+
+
+    useEffect(() => {
+        const categoryParam = searchParams.get("category")
+        //se activa solo cuando no hay catgoria selecionada
+        if (categoryParam && !filters.selectCategories.includes(categoryParam)) {
+            toggleCategory(categoryParam)
+            const newSearchParam = new URLSearchParams(searchParams);
+
+            newSearchParam.delete('category')
+            setSearchParams(newSearchParam, { replace: true })
+        }
+    }, [searchParams, filters.selectCategories, toggleCategory, setSearchParams])
 
     const handleSearch = (query: string) => {
         setSearchQuery(query)
@@ -35,13 +52,13 @@ const ProductsContent = () => {
             </div>
 
             <div className="mb-8">
-               <InputSearch 
+                <InputSearch
                     onSearch={handleSearch}
                     className="w-full max-w-3xl mx-auto"
-                    enableRealTimeSearch={true} 
-                    debounceDelay={300} 
+                    enableRealTimeSearch={true}
+                    debounceDelay={300}
                 />
-                
+
                 {filters.searchQuery && (
                     <div className="mt-3 text-center">
                         <span className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-purple-100 dark:bg-purple-900/30 text-purple-800 dark:text-purple-200 text-sm">
@@ -58,14 +75,14 @@ const ProductsContent = () => {
                     </div>
                 )}
             </div>
-            
+
             {/* Layout principal */}
             <div className="flex flex-col lg:flex-row gap-8">
                 {/* Filtros - Responsive */}
                 <div className="lg:w-80 shrink-0">
                     <FilterProducts />
                 </div>
-                
+
                 {/* Lista de productos */}
                 <div className="flex-1 min-w-0">
                     <ProductList />
