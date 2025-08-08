@@ -3,12 +3,9 @@ import { createBrowserRouter, Navigate } from 'react-router'
 import { ClientLayout } from './shared/layouts/ClientLayout'
 import { HomePage } from './modules/home/HomePage'
 import { ProductPage } from './modules/products/ProductPage'
-import { PanelPage } from './modules/admin/PanelPage'
-import { LoginPage } from './modules/admin/auth/LoginPage'
-import { lazy } from 'react'
 import { ProductDetailPage } from './modules/products/ProductDetailPage'
 
-const AdminLayout = lazy(() => import("./shared/layouts/AdminLayout"))
+// const AdminLayout = lazy(() => import("./shared/layouts/AdminLayout"))
 
 export const appRouter = createBrowserRouter([
     //Main
@@ -23,20 +20,20 @@ export const appRouter = createBrowserRouter([
         ]
     },
     //Auth
-    {
-        path: "/auth",
-        element: <LoginPage />
-    },
+    // {
+    //     path: "/auth",
+    //     element: <LoginPage />
+    // },
     //Admin
-    {
-        path: "/admin",
-        element: (
-            <AdminLayout />
-        ),
-        children: [
-            { index: true, element: <PanelPage /> }
-        ]
-    },
+    // {
+    //     path: "/admin",
+    //     element: (
+    //         <AdminLayout />
+    //     ),
+    //     children: [
+    //         { index: true, element: <PanelPage /> }
+    //     ]
+    // },
     {
         path: "*",
         element: <Navigate to="/" />
