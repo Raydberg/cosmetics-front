@@ -1,30 +1,42 @@
 import { useFilters } from "@/core/hooks/useFilters"
 import { useProduct } from "@/core/hooks/useProduct"
-import { useEffect } from "react"
+import { useEffect, useMemo, useRef } from "react"
 import { motion } from 'framer-motion';
 import { ProductCard } from "@/shared/components/product-card";
 
 export const ProductList = () => {
     const { products, loading, error, getActiveProducts, getFilteredProducts } = useProduct()
-
+    const previousFiltersRef = useRef<string>("")
     const { filters, hasActiveFilters } = useFilters()
+    const filtersKey = useMemo(() => {
+        return JSON.stringify({
+            categories: filters.selectCategories.sort(),
+            priceRange: filters.priceRange.sort(),
+            priceSlider: filters.priceSlider,
+            searchQuery: filters.searchQuery.trim()
+        })
+    }, [filters])
+
     useEffect(() => {
+        if (filtersKey === previousFiltersRef.current) {
+            return
+        }
+
+        console.log('🔄 Filters changed, fetching products...')
+        previousFiltersRef.current = filtersKey
+
         if (hasActiveFilters) {
             getFilteredProducts({
                 categoryIds: filters.selectCategories,
                 priceRanges: filters.priceRange,
-                priceSlider:filters.priceSlider,
-                searchQuery:filters.searchQuery
+                priceSlider: filters.priceSlider,
+                searchQuery: filters.searchQuery
             })
         } else {
-            
             getActiveProducts()
         }
+    }, [filtersKey, hasActiveFilters, getFilteredProducts, getActiveProducts, filters])
 
-        return () => {
-
-        }
-    }, [filters, hasActiveFilters, getFilteredProducts, getActiveProducts])
 
     if (loading) {
         return (
