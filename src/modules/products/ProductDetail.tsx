@@ -27,16 +27,20 @@ export default function ProductDetailModal({ product }: ProductDetailProps) {
     <div className="bg-white border dark:bg-gray-900 rounded-lg w-full overflow-hidden grid grid-cols-1 md:grid-cols-2">
       <div className="flex flex-col-reverse md:flex-row">
         <div className="flex flex-row md:flex-col justify-start md:justify-center items-center space-x-2 md:space-x-0 md:space-y-6 p-5 bg-gray-100 dark:bg-gray-800">
-          {product!.images.map((src, idx) => (
-            <button
-              key={idx}
-              onClick={() => setCurrentImageIndex(idx)}
-              className={` cursor-pointer w-14 h-14 md:w-30 md:h-30  border-2 rounded-lg overflow-hidden transition ${currentImageIndex === idx ? 'border-purple-500' : 'border-gray-300 hover:border-gray-400'
-                }`}
-            >
-              <img src={src} alt={`thumb-${idx}`} className="w-full h-full object-cover" />
-            </button>
-          ))}
+          {product!.images.map((src, idx) => {
+            if (product!.images.length > 1) {
+              return (
+                <button
+                  key={idx}
+                  onClick={() => setCurrentImageIndex(idx)}
+                  className={` cursor-pointer w-14 h-14 md:w-30 md:h-30  border-2 rounded-lg overflow-hidden transition ${currentImageIndex === idx ? 'border-purple-500' : 'border-gray-300 hover:border-gray-400'
+                    }`}
+                >
+                  <img src={src} alt={`thumb-${idx}`} className="w-full h-full object-cover" />
+                </button>
+              )
+            }
+          })}
         </div>
         <div className="relative flex-1 bg-gradient-to-br from-purple-50 to-indigo-50 dark:from-purple-900/20 dark:to-indigo-900/20">
           {product!.hasDiscount && (
@@ -81,7 +85,6 @@ export default function ProductDetailModal({ product }: ProductDetailProps) {
         </div>
       </div>
 
-      {/* DETALLE */}
       <div className="p-4 flex flex-col">
         <div className="flex justify-between items-center">
           <div>
