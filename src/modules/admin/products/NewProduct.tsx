@@ -48,6 +48,8 @@ import {
 import { useCategory } from '@/core/hooks/useCategory'
 import { toast } from 'sonner'
 import { Link } from 'react-router'
+import { ImageUploader } from './components/image-uploader'
+import { ProductPreview } from './components/product-preview'
 
 // ✅ Schema de validación corregido - todos los campos opcionales explícitos
 const productSchema = z.object({
@@ -210,10 +212,10 @@ export const NewProduct = () => {
             </div>
           </div>
           <div className="flex items-center gap-2">
-            <Button variant="outline" size="sm" type="button">
-              <Eye className="h-4 w-4 mr-2" />
-              Vista previa
-            </Button>
+            <ProductPreview
+              formData={form.watch()}
+              categories={categories}
+            />
           </div>
         </motion.div>
 
@@ -500,77 +502,29 @@ export const NewProduct = () => {
                         Imágenes del Producto
                       </CardTitle>
                       <CardDescription>
-                        Agrega URLs de las imágenes del producto (mínimo 1 requerida)
+                        Sube imágenes del producto desde tu dispositivo (máximo 5 imágenes)
                       </CardDescription>
                     </CardHeader>
-                    <CardContent className="space-y-4">
-                      <div className="flex gap-2">
-                        <Input
-                          placeholder="https://ejemplo.com/imagen.jpg"
-                          value={newImageUrl}
-                          onChange={(e) => {
-                            setNewImageUrl(e.target.value)
-                            previewImageUrl(e.target.value)
-                          }}
-                          onKeyPress={(e) => e.key === 'Enter' && (e.preventDefault(), addImage())}
-                          className="flex-1"
-                        />
-                        <Button
-                          type="button"
-                          onClick={addImage}
-                          disabled={!newImageUrl.trim()}
-                        >
-                          <Plus className="h-4 w-4" />
-                        </Button>
-                      </div>
+                    <CardContent>
+                      <ImageUploader
+                        onImagesChange={(images) => {
+                          // Limpiar el array de imágenes actual
+                          while (imageFields.length > 0) {
+                            removeImage(0)
+                          }
+                          // Agregar las nuevas imágenes
+                          images.forEach(imageUrl => appendImage(imageUrl))
+                        }}
+                        maxFiles={5}
+                        existingImages={imageFields.map(field => field.value)}
+                      />
 
-                      {previewImage && (
-                        <motion.div
-                          initial={{ opacity: 0, scale: 0.8 }}
-                          animate={{ opacity: 1, scale: 1 }}
-                          className="relative w-20 h-20 rounded-lg overflow-hidden border"
-                        >
-                          <img
-                            src={previewImage}
-                            alt="Preview"
-                            className="w-full h-full object-cover"
-                          />
-                        </motion.div>
+                      {/* Mostrar errores de validación */}
+                      {form.formState.errors.images && (
+                        <p className="text-sm text-red-500 mt-2">
+                          {form.formState.errors.images.message}
+                        </p>
                       )}
-
-                      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                        <AnimatePresence>
-                          {imageFields.map((field, index) => (
-                            <motion.div
-                              key={field.id}
-                              initial={{ opacity: 0, scale: 0.8 }}
-                              animate={{ opacity: 1, scale: 1 }}
-                              exit={{ opacity: 0, scale: 0.8 }}
-                              className="relative group"
-                            >
-                              <div className="aspect-square rounded-lg overflow-hidden border bg-gray-50">
-                                <img
-                                  src={field.value}
-                                  alt={`Imagen ${index + 1}`}
-                                  className="w-full h-full object-cover"
-                                  onError={(e) => {
-                                    e.currentTarget.src = 'https://via.placeholder.com/200x200?text=Error'
-                                  }}
-                                />
-                              </div>
-                              <Button
-                                type="button"
-                                variant="destructive"
-                                size="sm"
-                                className="absolute -top-2 -right-2 h-6 w-6 rounded-full p-0 opacity-0 group-hover:opacity-100 transition-opacity"
-                                onClick={() => removeImage(index)}
-                              >
-                                <X className="h-3 w-3" />
-                              </Button>
-                            </motion.div>
-                          ))}
-                        </AnimatePresence>
-                      </div>
                     </CardContent>
                   </Card>
                 </motion.div>
