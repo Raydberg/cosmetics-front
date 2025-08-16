@@ -4,8 +4,12 @@ import { ClientLayout } from './shared/layouts/ClientLayout'
 import { HomePage } from './modules/home/HomePage'
 import { ProductPage } from './modules/products/ProductPage'
 import { ProductDetailPage } from './modules/products/ProductDetailPage'
+import { lazy } from 'react'
+import { PanelPage } from './modules/admin/PanelPage'
+import { NewProduct } from './modules/admin/products/NewProduct'
+import { UpdateProduct } from './modules/admin/products/UpdateProduct'
 
-// const AdminLayout = lazy(() => import("./shared/layouts/AdminLayout"))
+const AdminLayout = lazy(() => import("./shared/layouts/AdminLayout"))
 
 export const appRouter = createBrowserRouter([
     //Main
@@ -14,8 +18,8 @@ export const appRouter = createBrowserRouter([
         element: <ClientLayout />,
         children: [
             { index: true, element: <HomePage /> },
-            { path: '/products', element: <ProductPage /> },
-            { path: '/products/:id', element: <ProductDetailPage /> },
+            { path: 'products', element: <ProductPage /> },
+            { path: 'products/:id', element: <ProductDetailPage /> },
             // { path: '/contact', element: <ContactPage /> }
         ]
     },
@@ -25,15 +29,15 @@ export const appRouter = createBrowserRouter([
     //     element: <LoginPage />
     // },
     //Admin
-    // {
-    //     path: "/admin",
-    //     element: (
-    //         <AdminLayout />
-    //     ),
-    //     children: [
-    //         { index: true, element: <PanelPage /> }
-    //     ]
-    // },
+    {
+        path: "/admin",
+        element: <AdminLayout />,
+        children: [
+            { index: true, element: <PanelPage /> },
+            { path: 'new-product', element: <NewProduct /> },
+            { path: 'update-product/:id', element: <UpdateProduct /> }
+        ]
+    },
     {
         path: "*",
         element: <Navigate to="/" />

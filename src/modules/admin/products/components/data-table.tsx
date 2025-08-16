@@ -17,6 +17,7 @@ import { ChevronDown, Plus, Search } from "lucide-react"
 import { columns } from "./colums"
 import { data } from '../../../../core/api/data-example';
 import { Input } from "@/shared/components/ui/input"
+import { Link } from "react-router"
 
 
 
@@ -55,10 +56,12 @@ export function DataTable() {
     <div className="w-full">
       <div className="flex justify-between items-center">
         <h1 className="font-bold text-2xl">Gestionar Productos</h1>
-        <Button>
-          <Plus />
-          Nuevo Producto
-        </Button>
+        <Link to={'/admin/new-product'}>
+          <Button>
+            <Plus />
+            Nuevo Producto
+          </Button>
+        </Link>
       </div>
       <div className="flex items-center py-4">
         <Search />
