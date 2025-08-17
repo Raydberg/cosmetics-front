@@ -1,19 +1,13 @@
+import type { ProductInterface } from '@/core/interfaces/product.interface'
+import { Badge } from '@/shared/components/ui/badge'
 import { Button } from '@/shared/components/ui/button'
 import { Checkbox } from '@/shared/components/ui/checkbox'
-import { Switch } from '@/shared/components/ui/switch'
 import type { ColumnDef } from '@tanstack/react-table'
 import { SquarePen, Trash } from 'lucide-react'
+import { Link } from 'react-router'
 
 
-export type Payment = {
-    id: string
-    amount: number
-    status: "pending" | "processing" | "success" | "failed"
-    email: string
-    image?: string
-}
-
-export const columns: ColumnDef<Payment>[] = [
+export const columns: ColumnDef<ProductInterface>[] = [
     {
         id: "select",
         header: ({ table }) => (
@@ -37,21 +31,20 @@ export const columns: ColumnDef<Payment>[] = [
         enableHiding: false,
     },
     {
-        accessorKey: "image",
+        accessorKey: "images",
         header: () => (
-            <>
-                <p className='text-center'>Imagen</p>
-            </>
+            <p className='text-center'>Imagen</p>
         ),
         cell: ({ row }) => {
-            const imageUrl = row.getValue("image") as string;
+            const images = row.getValue("images") as string[];
+            const imageUrl = images && images.length > 0 ? images[0] : '';
             const productName = row.getValue("name") as string;
 
             return (
                 <div className="flex items-center justify-center p-1">
                     <div className="relative w-12 h-12 rounded-lg overflow-hidden border border-gray-200 bg-gray-50">
                         <img
-                            src={imageUrl || 'https://raw.githubusercontent.com/stackzero-labs/ui/refs/heads/main/public/placeholders/essential-oil-01.jpg'}
+                            src={imageUrl || ''}
                             alt={productName || "Producto"}
                             className="w-full h-full object-cover transition-transform hover:scale-110 cursor-pointer"
                             onError={(e) => {
@@ -68,58 +61,70 @@ export const columns: ColumnDef<Payment>[] = [
     {
         accessorKey: "name",
         header: "Nombre",
-        cell: () => (
-            <div className="capitalize">Nombre</div>
+        cell: ({ row }) => (
+            <div className="capitalize">{row.getValue("name")}</div>
         ),
     },
     {
         accessorKey: "price",
         header: "Precio",
-        cell: () => (
-            <div className="capitalize">Precio</div>
-        ),
-    },
-    {
-        accessorKey: "status",
-        header: "Estado",
         cell: ({ row }) => (
-            <div className="capitalize flex items-center gap-1">
-                <Switch />
-                {row.getValue("status")}
-            </div>
+            <div className="capitalize">S/. {row.getValue("price")}</div>
         ),
     },
     {
-        accessorKey: "oferta",
+        accessorKey: "isActive",
+        header: "Estado",
+        cell: ({ row }) => {
+            const isActive = row.getValue("isActive") as boolean;
+
+            return (
+                <div className="capitalize flex items-center gap-1">
+                    <Badge variant={isActive ? 'outline' : 'destructive'}>
+                        {isActive ? 'Activo' : 'Inactivo'}
+                    </Badge>
+                </div>
+            );
+        },
+    },
+    {
+        accessorKey: "hasDiscount",
         header: "Oferta",
-        cell: () => (
-            <div className="capitalize">
-                Oferta
-            </div>
-        ),
+        cell: ({ row }) => {
+            const hasDiscount = row.getValue("hasDiscount") as boolean;
+
+            return (
+                <div className="capitalize">
+                    <Badge variant={hasDiscount ? 'secondary' : 'default'}>
+                        {hasDiscount ? 'En oferta' : 'No'}
+                    </Badge>
+                </div>
+            );
+        },
     },
     {
-        accessorKey: "acctions",
-        header: () => "Acciones",
-        cell: () => {
+        id: "actions",
+        header: () => <div className="text-center">Acciones</div>,
+        cell: ({ row }) => {
+            const product = row.original;
+
             return (
                 <div className='flex gap-1'>
+                    <Link to={`/admin/update-product/${product.$id}`}>
+                        <Button
+                            className='cursor-pointer'
+                            variant={'outline'}>
+                            <SquarePen />
+                        </Button>
+                    </Link>
                     <Button
                         className='cursor-pointer'
-                        onClick={() => alert("Editar producto")}
-                        variant={'outline'}>
-                        <SquarePen />
-                    </Button>
-                    <Button
-                        className='cursor-pointer'
-                        onClick={() => alert("Eliminar Producto")}
+                        onClick={() => alert(`Eliminar producto: ${product.name}`)}
                         variant={'destructive'}>
                         <Trash color='white' />
                     </Button>
                 </ div>
-
-            )
+            );
         },
     },
-
 ]

@@ -62,7 +62,7 @@ export const useProduct = () => {
 
 
     const getActiveProducts = useCallback(async (): Promise<ProductInterface[]> => {
-
+        
         const cacheKey = 'all-active-products'
 
         //Verificar en el cache
