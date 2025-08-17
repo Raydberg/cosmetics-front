@@ -1,3 +1,4 @@
+import type { ProductFormData } from "@/core/zod/admin/production-validation"
 import { Card, CardHeader, CardTitle, CardContent } from "@/shared/components/ui/card"
 import { FormField, FormItem, FormLabel, FormControl, FormMessage, FormDescription } from "@/shared/components/ui/form"
 import { Input } from "@/shared/components/ui/input"
@@ -5,9 +6,10 @@ import { Separator } from "@/shared/components/ui/separator"
 import { Switch } from "@/shared/components/ui/switch"
 import { AnimatePresence, motion } from "framer-motion"
 import { DollarSign } from "lucide-react"
+import type { UseFormReturn } from "react-hook-form"
 
 interface PriceSectionProps {
-    form: any
+    form: UseFormReturn<ProductFormData>
     hasDiscount: boolean | undefined
 
 }

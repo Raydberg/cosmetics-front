@@ -1,12 +1,15 @@
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/shared/components/ui/card'
 import { ImageIcon } from 'lucide-react'
 import { ImageUploader } from './image-uploader'
-import type { FieldArrayMethodProps } from 'react-hook-form'
+import type { FieldArrayMethodProps, UseFormReturn } from 'react-hook-form'
+import type { ProductFormData } from '@/core/zod/admin/production-validation'
+import type { FieldArrayItem } from './summary-section'
+
 
 interface ImageSectionProps {
-    imageFields: Record<"id", string>[]
+    imageFields: FieldArrayItem[]
     removeImage: (index?: number | number[]) => void
-    form: any
+    form: UseFormReturn<ProductFormData>
     appendImage: (value: unknown, options?: FieldArrayMethodProps) => void
 }
 

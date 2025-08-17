@@ -15,7 +15,7 @@ import { useState } from "react"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/shared/components/ui/table"
 import { ChevronDown, Plus, Search } from "lucide-react"
 import { columns } from "./colums"
-import { data } from '../../../../core/api/data-example';
+import { data } from '@/core/api/data-example';
 import { Input } from "@/shared/components/ui/input"
 import { Link } from "react-router"
 

@@ -1,18 +1,26 @@
 import type { CategoryInterface } from '@/core/interfaces/category.interface'
+import type { ProductFormData } from '@/core/zod/admin/production-validation'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/shared/components/ui/card'
 import { FormField, FormItem, FormLabel, FormControl, FormMessage, FormDescription } from '@/shared/components/ui/form'
 import { Input } from '@/shared/components/ui/input'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/shared/components/ui/select'
 import { Textarea } from '@/shared/components/ui/textarea'
 import { Package } from 'lucide-react'
+import type { UseFormReturn } from 'react-hook-form'
 
 interface ProductInformationProps {
-    form: any
+    form: UseFormReturn<ProductFormData>
     categoriesLoading: boolean
     categories: CategoryInterface[]
+    mode?: 'create' | 'edit'
 }
 
-export const ProductInformation = ({ form, categoriesLoading, categories }: ProductInformationProps) => {
+export const ProductInformation = ({
+    form,
+    categoriesLoading,
+    categories,
+    mode = 'create'
+}: ProductInformationProps) => {
     return (
         <Card>
             <CardHeader>
@@ -21,7 +29,11 @@ export const ProductInformation = ({ form, categoriesLoading, categories }: Prod
                     Información del Producto
                 </CardTitle>
                 <CardDescription>
-                    Información básica y descripción del producto
+                    {mode === 'create' ?
+                        'Información básica y descripción del producto' :
+                        'Actualiza la información básica del producto'
+                    }
+
                 </CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">

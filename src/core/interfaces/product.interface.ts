@@ -3,7 +3,7 @@ export interface ProductInterface {
     name: string
     description: string
     price: number
-    originalPrice?: number
+    originalPrice?: number | null
     discountPercentage?: number
     hasDiscount: boolean
     images: string[]

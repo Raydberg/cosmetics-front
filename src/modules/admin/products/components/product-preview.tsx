@@ -4,10 +4,11 @@ import { Button } from '@/shared/components/ui/button'
 import { Eye } from 'lucide-react'
 import { ProductCard } from '@/shared/components/product-card'
 import type { ProductInterface } from '@/core/interfaces/product.interface'
+import type { CategoryInterface } from '@/core/interfaces/category.interface'
 
 interface ProductPreviewProps {
-  formData: any // Los datos del formulario actual
-  categories: any[] // Para obtener el nombre de la categoría
+  formData: ProductInterface
+  categories: CategoryInterface[] 
 }
 
 export const ProductPreview = ({ formData, categories }: ProductPreviewProps) => {

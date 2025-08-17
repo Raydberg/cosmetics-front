@@ -1,10 +1,12 @@
+import type { ProductFormData } from "@/core/zod/admin/production-validation"
 import { Card, CardHeader, CardTitle, CardContent } from "@/shared/components/ui/card"
 import { FormField, FormItem, FormLabel, FormDescription, FormControl } from "@/shared/components/ui/form"
 import { Switch } from "@/shared/components/ui/switch"
 import { Info, Sparkles } from "lucide-react"
+import type { UseFormReturn } from "react-hook-form"
 
 interface StateSectionProps {
-    form: any
+    form: UseFormReturn<ProductFormData>
 }
 
 export const StateSection = ({ form }: StateSectionProps) => {

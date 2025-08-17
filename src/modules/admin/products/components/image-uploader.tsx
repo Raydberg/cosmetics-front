@@ -12,9 +12,9 @@ interface ImageUploaderProps {
   className?: string
 }
 
-export const ImageUploader = ({ 
-  onImagesChange, 
-  maxFiles = 5, 
+export const ImageUploader = ({
+  onImagesChange,
+  maxFiles = 5,
   existingImages = [],
   className = ""
 }: ImageUploaderProps) => {
@@ -31,10 +31,10 @@ export const ImageUploader = ({
   const uploadFile = async (file: File): Promise<string> => {
     // Simular upload delay
     await new Promise(resolve => setTimeout(resolve, 2000))
-    
+
     // Aquí implementarías la lógica real de upload a tu servicio
     // Por ejemplo: upload a Appwrite Storage, Cloudinary, etc.
-    
+
     // Por ahora, crear un URL temporal para desarrollo
     return URL.createObjectURL(file)
   }
@@ -56,22 +56,22 @@ export const ImageUploader = ({
     // Upload cada archivo
     for (const imageData of newImages) {
       setUploading(prev => [...prev, imageData.id])
-      
+
       try {
         const uploadedUrl = await uploadFile(imageData.file)
-        
+
         // Actualizar la imagen con la URL del servidor
-        setImages(prev => 
-          prev.map(img => 
-            img.id === imageData.id 
+        setImages(prev =>
+          prev.map(img =>
+            img.id === imageData.id
               ? { ...img, preview: uploadedUrl }
               : img
           )
         )
-        
+
         setUploading(prev => prev.filter(id => id !== imageData.id))
         toast.success('Imagen subida correctamente')
-        
+
       } catch (error) {
         console.error('Error uploading:', error)
         toast.error('Error al subir la imagen')
@@ -91,8 +91,8 @@ export const ImageUploader = ({
   }
 
   // Actualizar parent component cuando cambien las imágenes
-  const imageUrls = images.map(img => img.preview)
-  
+  // const imageUrls = images.map(img => img.preview)
+
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
     onDrop,
     accept: {
@@ -106,38 +106,42 @@ export const ImageUploader = ({
     <div className={`space-y-4 ${className}`}>
       {/* Dropzone */}
       <motion.div
-        {...getRootProps()}
         className={`
-          border-2 border-dashed rounded-lg p-8 text-center cursor-pointer transition-all duration-200
-          ${isDragActive 
-            ? 'border-purple-500 bg-purple-50 dark:bg-purple-900/20' 
+    border-2 border-dashed rounded-lg transition-all duration-200
+    ${isDragActive
+            ? 'border-purple-500 bg-purple-50 dark:bg-purple-900/20'
             : 'border-gray-300 dark:border-gray-600 hover:border-purple-400 hover:bg-gray-50 dark:hover:bg-gray-800'
           }
-          ${images.length >= maxFiles ? 'opacity-50 cursor-not-allowed' : ''}
-        `}
+    ${images.length >= maxFiles ? 'opacity-50 cursor-not-allowed' : ''}
+  `}
         whileHover={{ scale: images.length >= maxFiles ? 1 : 1.02 }}
         whileTap={{ scale: images.length >= maxFiles ? 1 : 0.98 }}
       >
-        <input {...getInputProps()} />
-        
-        <motion.div
-          initial={{ opacity: 0, y: 10 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="flex flex-col items-center gap-3"
+        <div
+          {...getRootProps()}
+          className="p-8 text-center cursor-pointer w-full h-full"
         >
-          <div className="p-3 bg-purple-100 dark:bg-purple-900/30 rounded-full">
-            <Upload className="h-8 w-8 text-purple-600 dark:text-purple-400" />
-          </div>
-          
-          <div>
-            <p className="text-lg font-medium text-gray-700 dark:text-gray-300">
-              {isDragActive ? 'Suelta las imágenes aquí' : 'Arrastra imágenes o haz clic'}
-            </p>
-            <p className="text-sm text-gray-500 dark:text-gray-400">
-              PNG, JPG, WEBP hasta 10MB • {images.length}/{maxFiles} imágenes
-            </p>
-          </div>
-        </motion.div>
+          <input {...getInputProps()} />
+
+          <motion.div
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="flex-col items-center gap-3"
+          >
+            <div className="p-3 bg-purple-100 dark:bg-purple-900/30 rounded-full">
+              <Upload className="h-8 w-8 text-purple-600 dark:text-purple-400" />
+            </div>
+
+            <div>
+              <p className="text-lg font-medium text-gray-700 dark:text-gray-300">
+                {isDragActive ? 'Suelta las imágenes aquí' : 'Arrastra imágenes o haz clic'}
+              </p>
+              <p className="text-sm text-gray-500 dark:text-gray-400">
+                PNG, JPG, WEBP hasta 10MB • {images.length}/{maxFiles} imágenes
+              </p>
+            </div>
+          </motion.div>
+        </div>
       </motion.div>
 
       {/* Grid de imágenes */}
