@@ -20,32 +20,33 @@ import { Link } from "react-router"
 import { useProduct } from "@/core/hooks/useProduct"
 
 export function DataTable() {
-  
+
   const { products, loading, error, getActiveProducts, clearCache } = useProduct()
   const [searchTerm, setSearchTerm] = useState('')
   const [dataLoaded, setDataLoaded] = useState(false)
-  
+
   const [sorting, setSorting] = useState<SortingState>([])
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({})
   const [rowSelection, setRowSelection] = useState({})
-  
+
   useEffect(() => {
     if (!dataLoaded) {
       const loadData = async () => {
         try {
-          await getActiveProducts()
+        
+          await getActiveProducts(true)
           setDataLoaded(true)
         } catch (error) {
           console.error("Error loading products:", error)
         }
       }
-      
+
       loadData()
     }
-  }, [dataLoaded]) 
+  }, [])
 
-  
+
   const filteredProducts = useMemo(() => {
     return products.filter(product =>
       product.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -73,7 +74,7 @@ export function DataTable() {
     },
     initialState: {
       pagination: {
-        pageSize: 5, 
+        pageSize: 5,
       },
     },
   })
@@ -81,7 +82,7 @@ export function DataTable() {
 
   const handleReloadData = useCallback(() => {
     clearCache()
-    getActiveProducts()
+    getActiveProducts(true) 
     setDataLoaded(true)
   }, [clearCache, getActiveProducts])
 
@@ -90,9 +91,9 @@ export function DataTable() {
       <div className="flex justify-between items-center mb-4">
         <h1 className="font-bold text-2xl">Gestionar Productos</h1>
         <div className="flex gap-2">
-          <Button 
-            variant="outline" 
-            size="icon" 
+          <Button
+            variant="outline"
+            size="icon"
             onClick={handleReloadData}
             title="Recargar productos"
           >
@@ -106,7 +107,7 @@ export function DataTable() {
           </Link>
         </div>
       </div>
-      
+
       <div className="flex items-center py-4">
         <div className="relative flex-1 max-w-sm">
           <Search className="absolute left-2 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-500" />
@@ -142,7 +143,7 @@ export function DataTable() {
           </DropdownMenuContent>
         </DropdownMenu>
       </div>
-      
+
       {loading ? (
         <div className="flex justify-center items-center p-8">
           <RefreshCw className="h-8 w-8 animate-spin text-purple-600" />
@@ -164,9 +165,9 @@ export function DataTable() {
                       {header.isPlaceholder
                         ? null
                         : flexRender(
-                            header.column.columnDef.header,
-                            header.getContext()
-                          )}
+                          header.column.columnDef.header,
+                          header.getContext()
+                        )}
                     </TableHead>
                   ))}
                 </TableRow>

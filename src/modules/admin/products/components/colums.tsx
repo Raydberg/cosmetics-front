@@ -1,10 +1,8 @@
 import type { ProductInterface } from '@/core/interfaces/product.interface'
 import { Badge } from '@/shared/components/ui/badge'
-import { Button } from '@/shared/components/ui/button'
 import { Checkbox } from '@/shared/components/ui/checkbox'
 import type { ColumnDef } from '@tanstack/react-table'
-import { SquarePen, Trash } from 'lucide-react'
-import { Link } from 'react-router'
+import { ActionButtons } from './action-buttons'
 
 
 export const columns: ColumnDef<ProductInterface>[] = [
@@ -108,23 +106,7 @@ export const columns: ColumnDef<ProductInterface>[] = [
         cell: ({ row }) => {
             const product = row.original;
 
-            return (
-                <div className='flex gap-1'>
-                    <Link to={`/admin/update-product/${product.$id}`}>
-                        <Button
-                            className='cursor-pointer'
-                            variant={'outline'}>
-                            <SquarePen />
-                        </Button>
-                    </Link>
-                    <Button
-                        className='cursor-pointer'
-                        onClick={() => alert(`Eliminar producto: ${product.name}`)}
-                        variant={'destructive'}>
-                        <Trash color='white' />
-                    </Button>
-                </ div>
-            );
+            return <ActionButtons product={product} />
         },
     },
 ]

@@ -1,4 +1,4 @@
-import { useCallback, useState } from "react"
+import { useCallback, useRef, useState } from "react"
 import type { ProductInterface } from "../interfaces/product.interface"
 import { db, DB_ID, Query } from "../lib/appwrite"
 import { COLLECTIONS } from "../config/collections"
@@ -20,7 +20,7 @@ export const useProduct = () => {
     const [error, setError] = useState<string | null>(null)
 
     const [products, setProducts] = useState<ProductInterface[]>([])
-
+    const dataLoadedRef = useRef<Record<string, boolean>>({})
     const productCache = useCache<ProductInterface[]>({
         defaultTTL: 10 * 60 * 1000,//-> 10 min
         maxSize: 60
@@ -61,15 +61,18 @@ export const useProduct = () => {
     }, [])
 
 
-    const getActiveProducts = useCallback(async (): Promise<ProductInterface[]> => {
-        
-        const cacheKey = 'all-active-products'
+    const getActiveProducts = useCallback(async (forceRefresh = false): Promise<ProductInterface[]> => {
 
+        const cacheKey = 'all-active-products'
+        if (products.length > 0 && dataLoadedRef.current[cacheKey] && !forceRefresh) {
+            return products
+        }
         //Verificar en el cache
         const cacheData = productCache.get(cacheKey)
-        if (cacheData) {
+        if (cacheData && !forceRefresh) {
             console.log("Usando data de la cache")
             setProducts(cacheData)
+            dataLoadedRef.current[cacheKey] = true
             return cacheData;
         }
 
@@ -89,6 +92,7 @@ export const useProduct = () => {
 
             productCache.set(cacheKey, activeProductsData)
             setProducts(activeProductsData)
+            dataLoadedRef.current[cacheKey] = true
             return activeProductsData;
         } catch (error) {
             setError(getErrorMessage(error))
@@ -207,14 +211,21 @@ export const useProduct = () => {
 
 
 
+    const invalidateProduct = useCallback((productId: string) => {
+        const cacheKey = `product-${productId}`
+        productCache.remove(cacheKey)
 
-    const getProductById = useCallback(async (productId: string): Promise<ProductInterface> => {
+        // También invalidar las listas que podrían contener este producto
+        productCache.remove('all-active-products')
+    }, [productCache])
+
+    const getProductById = useCallback(async (productId: string, forceRefresh = false): Promise<ProductInterface> => {
 
         const cacheKey = `product-${productId}`
 
         const cachedProduct = productCache.get(cacheKey)
 
-        if (cachedProduct) {
+        if (cachedProduct && !forceRefresh) {
             console.log("Producto por id desde la cache")
             return cachedProduct[0]
         }
@@ -247,6 +258,8 @@ export const useProduct = () => {
     const clearCache = useCallback(() => {
         productCache.clear()
         searchCache.clear()
+        // Resetear las flags de datos cargados
+        dataLoadedRef.current = {}
         console.log("Cache limpia")
     }, [productCache, searchCache])
 
@@ -265,6 +278,7 @@ export const useProduct = () => {
         getActiveProducts,
         getProductById,
         getFilteredProducts,
+        invalidateProduct,
         clearCache,
         getCacheStats
     }

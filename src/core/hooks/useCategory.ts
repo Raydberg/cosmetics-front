@@ -1,4 +1,4 @@
-import { useCallback, useState } from "react"
+import { useCallback, useRef, useState } from "react"
 import type { CategoryInterface } from "../interfaces/category.interface"
 import { db, DB_ID } from "../lib/appwrite"
 import { COLLECTIONS } from "../config/collections"
@@ -9,22 +9,25 @@ import { useCache } from "./useCache"
 
 export const useCategory = () => {
     const [loading, setLoading] = useState<boolean>(false)
-
     const [error, setError] = useState<string | null>(null)
     const [categories, setCategories] = useState<CategoryInterface[]>([])
+    const dataLoadedRef = useRef<Record<string, boolean>>({})
     const categoryCache = useCache<CategoryInterface[]>({
         defaultTTL: 30 * 60 * 1000, // 30 minutos
         maxSize: 10
     })
 
-    const getCategories = useCallback(async (): Promise<CategoryInterface[]> => {
+    const getCategories = useCallback(async (forceRefresh = false): Promise<CategoryInterface[]> => {
         const cacheKey = 'all-categories'
-
+        if (categories.length > 0 && dataLoadedRef.current[cacheKey] && !forceRefresh) {
+            return categories;
+        }
         // Verificar cache primero
         const cachedData = categoryCache.get(cacheKey)
-        if (cachedData) {
+        if (cachedData && !forceRefresh) {
             console.log('traer categorias de cache')
             setCategories(cachedData)
+            dataLoadedRef.current[cacheKey] = true;
             return cachedData
         }
 
@@ -33,7 +36,9 @@ export const useCategory = () => {
 
         try {
             console.log('🌐 Fetching categories from API')
-            const result = await db.listDocuments(DB_ID, COLLECTIONS.CATEGORY)
+            const result = await db.listDocuments(DB_ID, COLLECTIONS.CATEGORY, [
+                Query.equal('isActive', true)
+            ])
             const categoryData = result.documents.map(doc => {
                 const validation = CategorySchema.safeParse(doc)
                 return validation.data as CategoryInterface
@@ -42,8 +47,8 @@ export const useCategory = () => {
             // Guardar en cache
             categoryCache.set(cacheKey, categoryData)
             setCategories(categoryData)
-
-            return categoryData
+            dataLoadedRef.current[cacheKey] = true;
+            return categoryData;
         } catch (error) {
             const errorMessage = error instanceof Error ? error.message : "Error desconocido"
             setError(errorMessage)
@@ -53,14 +58,19 @@ export const useCategory = () => {
         }
     }, [categoryCache])
 
-    const getCategoryById = useCallback(async (categoryId: CategoryInterface['$id']): Promise<CategoryInterface | undefined> => {
+    const getCategoryById = useCallback(async (categoryId: CategoryInterface['$id'], forceRefresh = false): Promise<CategoryInterface | undefined> => {
         const cacheKey = `category-${categoryId}`
-
+        // if (categories.length > 0 && dataLoadedRef.current[cacheKey] && !forceRefresh) {
+        //     return categories;
+        // }
         // Verificar cache primero
         const cachedCategory = categoryCache.get(cacheKey)
-        if (cachedCategory && cachedCategory[0]) {
+
+        if (cachedCategory && cachedCategory[0] && !forceRefresh) {
             console.log(`traer categoria de cache: ${categoryId}`)
+            // dataLoadedRef.current[cacheKey] = true;
             return cachedCategory[0]
+
         }
 
         setLoading(true)
@@ -75,6 +85,7 @@ export const useCategory = () => {
                 const category = validation.data as CategoryInterface
                 // Guardar en cache
                 categoryCache.set(cacheKey, [category])
+                // dataLoadedRef.current[cacheKey] = true;
                 return category
             } else {
                 throw new Error("Datos de categoría inválidos")
@@ -88,14 +99,17 @@ export const useCategory = () => {
         }
     }, [categoryCache])
 
-    const getActiveCategories = useCallback(async (): Promise<CategoryInterface[]> => {
+    const getActiveCategories = useCallback(async (forceRefresh = false): Promise<CategoryInterface[]> => {
         const cacheKey = 'active-categories'
-
+        if (categories.length > 0 && dataLoadedRef.current[cacheKey] && !forceRefresh) {
+            return categories;
+        }
         // Verificar cache primero
         const cachedData = categoryCache.get(cacheKey)
-        if (cachedData) {
+        if (cachedData && !forceRefresh) {
             console.log('categorias activas desde la cache')
             setCategories(cachedData)
+            dataLoadedRef.current[cacheKey] = true;
             return cachedData
         }
 
@@ -115,7 +129,7 @@ export const useCategory = () => {
             // Guardar en cache
             categoryCache.set(cacheKey, activeCategoriesData)
             setCategories(activeCategoriesData)
-
+            dataLoadedRef.current[cacheKey] = true;
             return activeCategoriesData
         } catch (error) {
             const errorMessage = getErrorMessage(error)
@@ -130,7 +144,7 @@ export const useCategory = () => {
         console.log('🧹 Categories cache cleared')
     }, [categoryCache])
 
-    
+
     return {
         categories,
         loading,

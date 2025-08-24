@@ -1,5 +1,5 @@
 import { productAdminSchema, type ProductFormData } from "@/core/zod/admin/production-validation"
-import { useCallback, useEffect, useState } from "react"
+import { useCallback, useEffect, useMemo, useState, useTransition } from "react"
 import { useCategory } from "../useCategory"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useFieldArray, useForm } from "react-hook-form"
@@ -12,31 +12,34 @@ interface UseProductFormOptions {
     onSubmit: (data: ProductFormData) => Promise<void>
 }
 export const useProductForm = ({ mode, initialData, onSubmit }: UseProductFormOptions) => {
+    const [isPending, startTransition] = useTransition()
     const [isLoading, setIsLoading] = useState(false)
     const [newTag, setNewTag] = useState('')
     const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false)
 
     const { categories, getActiveCategories, loading: categoriesLoading } = useCategory()
-
     const getDefaultValues = (): ProductFormData => {
         if (mode === 'edit' && initialData) {
             return {
-                name: initialData.name,
-                description: initialData.description,
-                price: initialData.price,
+                ...initialData,
+                // Transforma categoryId a string si es un objeto
+                categoryId: typeof initialData.categoryId === "object" && initialData.categoryId !== null
+                    ? initialData.categoryId.$id
+                    : initialData.categoryId ?? "",
+                // Asegúrate de que las imágenes sean un array de strings
+                images: Array.isArray(initialData.images) ? initialData.images : [],
+                // Asegúrate de que las etiquetas sean un array de strings
+                tags: Array.isArray(initialData.tags) ? initialData.tags : [],
+                brand: initialData.brand || "",
                 originalPrice: initialData.originalPrice || null,
                 discountPercentage: initialData.discountPercentage || 0,
                 hasDiscount: initialData.hasDiscount || false,
-                images: initialData.images || [],
-                categoryId: initialData.categoryId,
-                stock: initialData.stock,
                 featured: initialData.featured || false,
                 isActive: initialData.isActive !== undefined ? initialData.isActive : true,
-                brand: initialData.brand || '',
-                tags: initialData.tags || []
-            }
+            };
         }
 
+        // Valores por defecto para modo "create"
         return {
             name: '',
             description: '',
@@ -51,12 +54,13 @@ export const useProductForm = ({ mode, initialData, onSubmit }: UseProductFormOp
             isActive: true,
             brand: '',
             tags: []
-        }
-    }
+        };
+    };
+    const defaultValues = useMemo(() => getDefaultValues(), [initialData, mode]);
 
     const form = useForm<ProductFormData>({
         resolver: zodResolver(productAdminSchema),
-        defaultValues: getDefaultValues(),
+        defaultValues,
         mode: 'onChange'
     })
 
@@ -66,7 +70,7 @@ export const useProductForm = ({ mode, initialData, onSubmit }: UseProductFormOp
         remove: removeImage,
         replace: replaceImages
     } = useFieldArray({
-        control: form.control ,
+        control: form.control,
         name: 'images' as never
     })
 
@@ -113,13 +117,13 @@ export const useProductForm = ({ mode, initialData, onSubmit }: UseProductFormOp
             setHasUnsavedChanges(false)
             toast.info('Formulario restablecido')
         }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [mode, initialData, form, replaceImages, replaceTags])
 
     // Agregar etiqueta
     const addTag = useCallback(() => {
         if (newTag.trim()) {
-            const tagExists = tagFields.some((field:FieldArrayItem) => field.value.toLowerCase() === newTag.trim().toLowerCase())
+            const tagExists = tagFields.some((field: FieldArrayItem) => field.value.toLowerCase() === newTag.trim().toLowerCase())
             if (!tagExists) {
                 appendTag({ value: newTag.trim() })
                 setNewTag('')
@@ -133,24 +137,26 @@ export const useProductForm = ({ mode, initialData, onSubmit }: UseProductFormOp
     // Manejar submit
     const handleSubmit = async (data: ProductFormData) => {
         setIsLoading(true)
-        try {
-            await onSubmit(data)
-            setHasUnsavedChanges(false)
-            toast.success(
-                mode === 'create'
-                    ? 'Producto creado exitosamente!'
-                    : 'Producto actualizado exitosamente!'
-            )
-        } catch (error) {
-            console.error(`Error al ${mode === 'create' ? 'crear' : 'actualizar'}:`, error)
-            toast.error(
-                mode === 'create'
-                    ? 'Error al crear el producto'
-                    : 'Error al actualizar el producto'
-            )
-        } finally {
-            setIsLoading(false)
-        }
+        startTransition(async () => {
+            try {
+                await onSubmit(data)
+                setHasUnsavedChanges(false)
+                toast.success(
+                    mode === 'create'
+                        ? 'Producto creado exitosamente!'
+                        : 'Producto actualizado exitosamente!'
+                )
+            } catch (error) {
+                console.error(`Error al ${mode === 'create' ? 'crear' : 'actualizar'}:`, error)
+                toast.error(
+                    mode === 'create'
+                        ? 'Error al crear el producto'
+                        : 'Error al actualizar el producto'
+                )
+            } finally {
+                setIsLoading(false)
+            }
+        })
     }
 
     return {
@@ -168,6 +174,7 @@ export const useProductForm = ({ mode, initialData, onSubmit }: UseProductFormOp
         // State
         isLoading,
         hasUnsavedChanges,
+        isPending,
         newTag,
         setNewTag,
 

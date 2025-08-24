@@ -2,6 +2,7 @@ import type { FieldArrayItem } from "@/modules/admin/products/components/summary
 import z from "zod";
 
 export const productAdminSchema = z.object({
+  // id$:z.string().optional(),
   name: z.string().min(1, 'El nombre es requerido').max(100, 'Máximo 100 caracteres'),
   description: z.string().min(10, 'Mínimo 10 caracteres').max(500, 'Máximo 500 caracteres'),
   price: z.number().min(0.01, 'El precio debe ser mayor a 0'),
