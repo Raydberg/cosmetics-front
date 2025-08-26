@@ -28,9 +28,11 @@ export const useProductForm = ({ mode, initialData, onSubmit }: UseProductFormOp
                     : initialData.categoryId ?? "",
                 // Asegúrate de que las imágenes sean un array de strings
                 images: Array.isArray(initialData.images) ? initialData.images : [],
+
+                // Transforma brand a string vacío si es null
+                brand: initialData.brand || "",
                 // Asegúrate de que las etiquetas sean un array de strings
                 tags: Array.isArray(initialData.tags) ? initialData.tags : [],
-                brand: initialData.brand || "",
                 originalPrice: initialData.originalPrice || null,
                 discountPercentage: initialData.discountPercentage || 0,
                 hasDiscount: initialData.hasDiscount || false,
@@ -71,7 +73,8 @@ export const useProductForm = ({ mode, initialData, onSubmit }: UseProductFormOp
         replace: replaceImages
     } = useFieldArray({
         control: form.control,
-        name: 'images' as never
+        name: 'images' as never,
+        keyName: 'id'
     })
 
     const { fields: tagFields, append: appendTag, remove: removeTag, replace: replaceTags } = useFieldArray({

@@ -24,7 +24,7 @@ export const ImageUploader = ({
       preview: url,
       id: `existing-${index}`
     }))
-  )
+  );
   const [uploading, setUploading] = useState<string[]>([])
 
   // Función para simular upload (reemplaza con tu lógica de upload real)

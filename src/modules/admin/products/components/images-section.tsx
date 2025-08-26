@@ -30,13 +30,13 @@ export const ImagesSection = ({ imageFields, removeImage, appendImage, form }: I
                     onImagesChange={(images) => {
                         // Limpiar el array de imágenes actual
                         while (imageFields.length > 0) {
-                            removeImage(0)
+                            removeImage(0);
                         }
                         // Agregar las nuevas imágenes
-                        images.forEach(imageUrl => appendImage(imageUrl))
+                        images.forEach(imageUrl => appendImage({ id: `${Date.now()}`, value: imageUrl }));
                     }}
                     maxFiles={5}
-                    existingImages={imageFields.map(field => field.value)}
+                    existingImages={imageFields.map(field => field.value)} // Asegúrate de pasar los valores correctos
                 />
 
                 {/* Mostrar errores de validación */}

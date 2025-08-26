@@ -99,21 +99,25 @@ export const UpdateProduct = () => {
   })
   console.log("Producto actual", currentProduct)
   console.log("Form", form)
-useEffect(() => {
+  useEffect(() => {
     if (currentProduct) {
-        form.reset({
-            ...currentProduct,
-            // Transforma categoryId a string si es un objeto
-            categoryId: typeof currentProduct.categoryId === "object" && currentProduct.categoryId !== null
-                ? currentProduct.categoryId.$id
-                : currentProduct.categoryId ?? "",
-            // Asegúrate de que las imágenes sean un array de strings
-            images: Array.isArray(currentProduct.images) ? currentProduct.images : [],
-            // Asegúrate de que las etiquetas sean un array de strings
-            tags: Array.isArray(currentProduct.tags) ? currentProduct.tags : [],
-        });
+      form.reset({
+        ...currentProduct,
+        // Transforma categoryId a string si es un objeto
+        categoryId: typeof currentProduct.categoryId === "object" && currentProduct.categoryId !== null
+          ? currentProduct.categoryId.$id
+          : currentProduct.categoryId ?? "",
+        // Asegúrate de que las imágenes sean un array de strings
+        images: Array.isArray(currentProduct.images)
+          ? currentProduct.images
+          : [],
+        // Transforma brand a string vacío si es null
+        brand: currentProduct.brand || "",
+        // Asegúrate de que las etiquetas sean un array de strings
+        tags: Array.isArray(currentProduct.tags) ? currentProduct.tags : [],
+      });
     }
-}, [currentProduct, form]);
+  }, [currentProduct, form]);
   // Estado de carga
   if (isLoadingProduct || isPending) {
     return (
