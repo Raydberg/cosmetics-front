@@ -1,157 +1,37 @@
-import { useCallback, useRef, useState } from "react"
-import type { CategoryInterface } from "../interfaces/category.interface"
-import { db, DB_ID } from "../lib/appwrite"
-import { COLLECTIONS } from "../config/collections"
-import { Query } from "appwrite"
-import { CategorySchema } from "../zod/category-shemas"
-import { getErrorMessage } from "../utils/getErrorMessage"
-import { useCache } from "./useCache"
+import { useQuery } from "@tanstack/react-query"
+import { useCategoryStore } from "../store/useCategoryStore";
+import { CategoryService } from "../services/category.service";
+
 
 export const useCategory = () => {
-    const [loading, setLoading] = useState<boolean>(false)
-    const [error, setError] = useState<string | null>(null)
-    const [categories, setCategories] = useState<CategoryInterface[]>([])
-    const dataLoadedRef = useRef<Record<string, boolean>>({})
-    const categoryCache = useCache<CategoryInterface[]>({
-        defaultTTL: 30 * 60 * 1000, // 30 minutos
-        maxSize: 10
+    // const queryClient = useQueryClient();
+    const { setCategories, selectedCategory, selectCategory } = useCategoryStore();
+
+    const categoryQuery = useQuery({
+        queryKey: ['categories'],
+        queryFn: CategoryService.getAllCategories,
+        staleTime: 1000 * 60 * 60
+    })
+    const categoryActiveQuery = useQuery({
+        queryKey: ['category-active'],
+        queryFn: CategoryService.getActiveCategories,
+        staleTime: 1000 * 60 * 60
     })
 
-    const getCategories = useCallback(async (forceRefresh = false): Promise<CategoryInterface[]> => {
-        const cacheKey = 'all-categories'
-        if (categories.length > 0 && dataLoadedRef.current[cacheKey] && !forceRefresh) {
-            return categories;
-        }
-        // Verificar cache primero
-        const cachedData = categoryCache.get(cacheKey)
-        if (cachedData && !forceRefresh) {
-            console.log('traer categorias de cache')
-            setCategories(cachedData)
-            dataLoadedRef.current[cacheKey] = true;
-            return cachedData
-        }
+    const useCategoryId = (categoryId: string) => {
+        return useQuery({
+            queryKey: ['categories', categoryId],
+            queryFn: () => CategoryService.getCategoryId(categoryId)
+        });
+    }
 
-        setLoading(true)
-        setError(null)
-
-        try {
-            console.log('🌐 Fetching categories from API')
-            const result = await db.listDocuments(DB_ID, COLLECTIONS.CATEGORY, [
-                Query.equal('isActive', true)
-            ])
-            const categoryData = result.documents.map(doc => {
-                const validation = CategorySchema.safeParse(doc)
-                return validation.data as CategoryInterface
-            })
-
-            // Guardar en cache
-            categoryCache.set(cacheKey, categoryData)
-            setCategories(categoryData)
-            dataLoadedRef.current[cacheKey] = true;
-            return categoryData;
-        } catch (error) {
-            const errorMessage = error instanceof Error ? error.message : "Error desconocido"
-            setError(errorMessage)
-            throw error
-        } finally {
-            setLoading(false)
-        }
-    }, [categoryCache])
-
-    const getCategoryById = useCallback(async (categoryId: CategoryInterface['$id'], forceRefresh = false): Promise<CategoryInterface | undefined> => {
-        const cacheKey = `category-${categoryId}`
-        // if (categories.length > 0 && dataLoadedRef.current[cacheKey] && !forceRefresh) {
-        //     return categories;
-        // }
-        // Verificar cache primero
-        const cachedCategory = categoryCache.get(cacheKey)
-
-        if (cachedCategory && cachedCategory[0] && !forceRefresh) {
-            console.log(`traer categoria de cache: ${categoryId}`)
-            // dataLoadedRef.current[cacheKey] = true;
-            return cachedCategory[0]
-
-        }
-
-        setLoading(true)
-        setError(null)
-
-        try {
-            console.log(`🌐 Fetching category from API: ${categoryId}`)
-            const result = await db.getDocument(DB_ID, COLLECTIONS.CATEGORY, categoryId ?? '')
-            const validation = CategorySchema.safeParse(result)
-
-            if (validation.success) {
-                const category = validation.data as CategoryInterface
-                // Guardar en cache
-                categoryCache.set(cacheKey, [category])
-                // dataLoadedRef.current[cacheKey] = true;
-                return category
-            } else {
-                throw new Error("Datos de categoría inválidos")
-            }
-        } catch (error) {
-            const errorMessage = error instanceof Error ? error.message : 'Error desconocido'
-            setError(errorMessage)
-            console.error("Error obteniendo categoría:", error)
-        } finally {
-            setLoading(false)
-        }
-    }, [categoryCache])
-
-    const getActiveCategories = useCallback(async (forceRefresh = false): Promise<CategoryInterface[]> => {
-        const cacheKey = 'active-categories'
-        if (categories.length > 0 && dataLoadedRef.current[cacheKey] && !forceRefresh) {
-            return categories;
-        }
-        // Verificar cache primero
-        const cachedData = categoryCache.get(cacheKey)
-        if (cachedData && !forceRefresh) {
-            console.log('categorias activas desde la cache')
-            setCategories(cachedData)
-            dataLoadedRef.current[cacheKey] = true;
-            return cachedData
-        }
-
-        setLoading(true)
-        setError(null)
-
-        try {
-            const result = await db.listDocuments(DB_ID, COLLECTIONS.CATEGORY, [
-                Query.equal('isActive', true)
-            ])
-
-            const activeCategoriesData = result.documents.map(doc => {
-                const validation = CategorySchema.safeParse(doc)
-                return validation.data as CategoryInterface
-            })
-
-            // Guardar en cache
-            categoryCache.set(cacheKey, activeCategoriesData)
-            setCategories(activeCategoriesData)
-            dataLoadedRef.current[cacheKey] = true;
-            return activeCategoriesData
-        } catch (error) {
-            const errorMessage = getErrorMessage(error)
-            setError(errorMessage)
-            throw error
-        } finally {
-            setLoading(false)
-        }
-    }, [categoryCache])
-    const clearCache = useCallback(() => {
-        categoryCache.clear()
-        console.log('🧹 Categories cache cleared')
-    }, [categoryCache])
-
-
+    
     return {
-        categories,
-        loading,
-        error,
-        getCategories,
-        getCategoryById,
-        getActiveCategories,
-        clearCache
+        setCategories,
+        selectedCategory,
+        selectCategory,
+        categoryQuery,
+        categoryActiveQuery,
+        useCategoryId
     }
 }

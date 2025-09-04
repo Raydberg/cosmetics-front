@@ -2,11 +2,11 @@ import { ProductCard } from "@/shared/components/product-card"
 import { Button } from "@/shared/components/ui/button"
 import { ArrowRight } from "lucide-react"
 import { Link } from "react-router"
-import { CategorySection } from "../categories/CategorySection"
-import { useProduct } from "@/core/hooks/useProduct"
+import { CategorySection } from "./components/CategorySection"
+import { useProduct } from "@/modules/client/hooks/useProduct"
 import { useEffect } from "react"
 
-export const HomePage = () => {
+export const LandingPage = () => {
   const { products, getActiveProducts } = useProduct()
 
   useEffect(() => {

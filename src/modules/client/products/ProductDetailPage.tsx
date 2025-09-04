@@ -1,9 +1,8 @@
-import { useProduct } from "@/core/hooks/useProduct";
+import { useProduct } from "@/modules/client/hooks/useProduct";
 import type { ProductInterface } from "@/core/interfaces/product.interface";
 import { Button } from "@/shared/components/ui/button";
 import { useEffect, useMemo, useState } from "react";
 import { useNavigate, useParams } from "react-router"
-import ProductDetailModal from "./ProductDetail";
 import { motion } from 'framer-motion';
 import { ArrowLeft } from "lucide-react";
 
@@ -11,7 +10,7 @@ export const ProductDetailPage = () => {
 
     const { id } = useParams<{ id: string }>()
     const navigate = useNavigate();
-    const { getProductById, loading, error } = useProduct()
+    const { getProductById } = useProduct()
     const [product, setProduct] = useState<ProductInterface | null>(null)
 
 
@@ -33,31 +32,7 @@ export const ProductDetailPage = () => {
         }
     }, [fetchProduct])
 
-    if (loading) {
-        return (
-            <div>Cargando</div>
-        )
-    }
-    if (error) {
-        return (
-            <div>
-                <p className="text-red-500"> Error: {error} </p>
-                <Button onClick={() => navigate("/products")}>
-                    Volver a productos
-                </Button>
-            </div>
-        )
-    }
-    if (!product) {
-        return (
-            <div>
-                <p className="text-red-500"> Producto no encontrado </p>
-                <Button onClick={() => navigate("/products")}>
-                    Volver a productos
-                </Button>
-            </div>
-        )
-    }
+
     return (
         <div className="container mx-auto px-4 py-8">
             <motion.div
@@ -74,7 +49,7 @@ export const ProductDetailPage = () => {
                     Volver a productos
                 </Button>
 
-                <ProductDetailModal product={product} />
+                {/* <ProductDetailModal product={product} /> */}
             </motion.div>
         </div>
     )

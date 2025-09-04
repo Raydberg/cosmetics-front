@@ -1,5 +1,5 @@
 import { useFilters } from "@/core/hooks/useFilters"
-import { useProduct } from "@/core/hooks/useProduct"
+import { useProduct } from "@/modules/client/hooks/useProduct"
 import { useEffect, useMemo, useRef } from "react"
 import { motion } from 'framer-motion';
 import { ProductCard } from "@/shared/components/product-card";

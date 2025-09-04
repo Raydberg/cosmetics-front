@@ -54,7 +54,7 @@ export const TagsSections = ({ newTag, setNewTag, addTag, tagFields, removeTag }
                                 exit={{ opacity: 0, scale: 0.8 }}
                             >
                                 <Badge variant="secondary" className="flex items-center gap-1">
-                                    {field.value}
+                                    {/* {field.value} */}Badge
                                     <Button
                                         type="button"
                                         variant="ghost"

@@ -1,10 +1,10 @@
 import { useCallback, useRef, useState } from "react"
-import type { ProductInterface } from "../interfaces/product.interface"
-import { db, DB_ID, Query } from "../lib/appwrite"
-import { COLLECTIONS } from "../config/collections"
-import { ProductSchema } from "../zod/product-shemas"
-import { getErrorMessage } from "../utils/getErrorMessage"
-import { useCache } from "./useCache"
+import type { ProductInterface } from "../../../core/interfaces/product.interface"
+import { db, DB_ID, Query } from "../../../core/lib/appwrite"
+import { COLLECTIONS } from "../../../core/config/collections"
+import { ProductSchema } from "../../../core/zod/product-shemas"
+import { getErrorMessage } from "../../../core/utils/getErrorMessage"
+import { useCache } from "../../../core/hooks/useCache"
 
 
 interface FilterOptions {

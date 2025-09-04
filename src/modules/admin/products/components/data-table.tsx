@@ -17,7 +17,7 @@ import { ChevronDown, Plus, RefreshCw, Search } from "lucide-react"
 import { columns } from "./colums"
 import { Input } from "@/shared/components/ui/input"
 import { Link } from "react-router"
-import { useProduct } from "@/core/hooks/useProduct"
+import { useProduct } from "@/modules/client/hooks/useProduct"
 
 export function DataTable() {
 
@@ -34,7 +34,7 @@ export function DataTable() {
     if (!dataLoaded) {
       const loadData = async () => {
         try {
-        
+
           await getActiveProducts(true)
           setDataLoaded(true)
         } catch (error) {
@@ -82,7 +82,7 @@ export function DataTable() {
 
   const handleReloadData = useCallback(() => {
     clearCache()
-    getActiveProducts(true) 
+    getActiveProducts(true)
     setDataLoaded(true)
   }, [clearCache, getActiveProducts])
 

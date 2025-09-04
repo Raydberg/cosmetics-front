@@ -1,9 +1,9 @@
 
 import { createBrowserRouter, Navigate } from 'react-router'
 import { ClientLayout } from './shared/layouts/ClientLayout'
-import { HomePage } from './modules/home/HomePage'
-import { ProductPage } from './modules/products/ProductPage'
-import { ProductDetailPage } from './modules/products/ProductDetailPage'
+import { LandingPage } from './modules/client/landing/LandingPage'
+import { ProductPage } from './modules/client/products/ProductPage'
+import { ProductDetailPage } from './modules/client/products/ProductDetailPage'
 import { lazy } from 'react'
 import { PanelPage } from './modules/admin/PanelPage'
 import { NewProduct } from './modules/admin/products/NewProduct'
@@ -17,7 +17,7 @@ export const appRouter = createBrowserRouter([
         path: "/",
         element: <ClientLayout />,
         children: [
-            { index: true, element: <HomePage /> },
+            { index: true, element: <LandingPage /> },
             { path: 'products', element: <ProductPage /> },
             { path: 'products/:id', element: <ProductDetailPage /> },
             // { path: '/contact', element: <ContactPage /> }
