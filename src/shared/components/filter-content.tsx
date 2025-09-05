@@ -1,11 +1,12 @@
-import { useEffect, useState } from "react"
+import { useState } from "react"
 import { AnimatePresence, motion } from 'framer-motion';
 import { ChevronDown } from "lucide-react";
 import { Checkbox } from "./ui/checkbox";
 import { Label } from "./ui/label";
 import { useCategory } from "@/core/hooks/useCategory";
-import { useFilters } from "@/core/hooks/useFilters";
+
 import { Slider } from "./ui/slider";
+import { useProduct } from "@/modules/client/hooks/useProduct";
 
 export const FilterContent = () => {
     const [openSections, setOpenSections] = useState({
@@ -22,19 +23,14 @@ export const FilterContent = () => {
         }))
     }
 
-    const { getActiveCategories, categories } = useCategory()
-    const { filters, toggleCategory, togglePriceRange, setPriceSlider } = useFilters()
+    const { categoryActiveQuery,selectedCategory } = useCategory()
 
-    useEffect(() => {
-        getActiveCategories()
-    }, [])
+    const { filters, filterActions } = useProduct()
 
-    useEffect(() => {
-        setLocalSliderValue(filters.priceSlider)
-    }, [filters.priceSlider])
+
 
     const handleSliderCommit = (value: number[]) => {
-        setPriceSlider(value as [number, number])
+        filterActions.setPriceSlider(value as [number, number])
     }
 
     return (
@@ -48,9 +44,9 @@ export const FilterContent = () => {
                 >
                     <h4 className="text-sm font-semibold text-gray-900 dark:text-gray-100">
                         Categorías
-                        {filters.selectCategories.length > 0 && (
+                        {filterActions.toggleCategory.length > 0 && (
                             <span className="ml-2 px-2 py-1 text-xs bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-200 rounded-full">
-                                {filters.selectCategories.length}
+                                {filterActions.toggleCategory.length}
                             </span>
                         )}
                     </h4>
@@ -72,8 +68,10 @@ export const FilterContent = () => {
                             className="overflow-hidden"
                         >
                             <div className="space-y-3 pl-2">
-                                {categories.map((category, index) => {
-                                    const isSelected = filters.selectCategories.includes(category.$id!)
+                                {categoryActiveQuery.data?.map((category, index) => {
+                                    const isSelected = Array.isArray(selectedCategory)
+                                        ? selectedCategory.includes(category.$id!)
+                                        : selectedCategory && (selectedCategory.$id === category.$id);
                                     return (
                                         <motion.div
                                             key={category.$id}
@@ -81,20 +79,20 @@ export const FilterContent = () => {
                                             animate={{ x: 0, opacity: 1 }}
                                             transition={{ delay: index * 0.1 }}
                                             className={`flex items-center gap-3 p-2 rounded-lg transition-colors ${isSelected
-                                                    ? 'bg-purple-50 dark:bg-purple-900/20 border border-purple-200 dark:border-purple-700'
-                                                    : 'hover:bg-gray-50 dark:hover:bg-gray-800'
+                                                ? 'bg-purple-50 dark:bg-purple-900/20 border border-purple-200 dark:border-purple-700'
+                                                : 'hover:bg-gray-50 dark:hover:bg-gray-800'
                                                 }`}
                                         >
                                             <Checkbox
                                                 id={category.$id}
-                                                checked={isSelected}
-                                                onCheckedChange={() => toggleCategory(category.$id!)}
+                                                checked={isSelected!}
+                                                onCheckedChange={() => filterActions.toggleCategory(category.$id!)}
                                             />
                                             <Label
                                                 htmlFor={category.$id}
                                                 className={`text-sm font-normal cursor-pointer flex-1 transition-colors ${isSelected
-                                                        ? 'text-purple-700 dark:text-purple-300 font-medium'
-                                                        : 'hover:text-gray-900 dark:hover:text-gray-100'
+                                                    ? 'text-purple-700 dark:text-purple-300 font-medium'
+                                                    : 'hover:text-gray-900 dark:hover:text-gray-100'
                                                     }`}
                                             >
                                                 {category.name}
@@ -175,9 +173,9 @@ export const FilterContent = () => {
                 >
                     <h4 className="text-sm font-semibold text-gray-900 dark:text-gray-100">
                         Rangos Rápidos
-                        {filters.priceRange.length > 0 && (
+                        {filters.priceRanges.length > 0 && (
                             <span className="ml-2 px-2 py-1 text-xs bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-200 rounded-full">
-                                {filters.priceRange.length}
+                                {filters.priceRanges.length}
                             </span>
                         )}
                     </h4>
@@ -204,7 +202,7 @@ export const FilterContent = () => {
                                     { id: "price2", label: "S/.20 - S/.50" },
                                     { id: "price3", label: "Más de S/.50" }
                                 ].map((item, index) => {
-                                    const isSelected = filters.priceRange.includes(item.id)
+                                    const isSelected = filters.priceRanges.includes(item.id)
                                     return (
                                         <motion.div
                                             key={item.id}
@@ -212,20 +210,20 @@ export const FilterContent = () => {
                                             animate={{ x: 0, opacity: 1 }}
                                             transition={{ delay: index * 0.1 }}
                                             className={`flex items-center gap-3 p-2 rounded-lg transition-colors ${isSelected
-                                                    ? 'bg-purple-50 dark:bg-purple-900/20 border border-purple-200 dark:border-purple-700'
-                                                    : 'hover:bg-gray-50 dark:hover:bg-gray-800'
+                                                ? 'bg-purple-50 dark:bg-purple-900/20 border border-purple-200 dark:border-purple-700'
+                                                : 'hover:bg-gray-50 dark:hover:bg-gray-800'
                                                 }`}
                                         >
                                             <Checkbox
                                                 id={item.id}
                                                 checked={isSelected}
-                                                onCheckedChange={() => togglePriceRange(item.id)}
+                                                onCheckedChange={() => filterActions.togglePriceRange(item.id)}
                                             />
                                             <Label
                                                 htmlFor={item.id}
                                                 className={`text-sm font-normal cursor-pointer flex-1 transition-colors ${isSelected
-                                                        ? 'text-purple-700 dark:text-purple-300 font-medium'
-                                                        : 'hover:text-gray-900 dark:hover:text-gray-100'
+                                                    ? 'text-purple-700 dark:text-purple-300 font-medium'
+                                                    : 'hover:text-gray-900 dark:hover:text-gray-100'
                                                     }`}
                                             >
                                                 {item.label}

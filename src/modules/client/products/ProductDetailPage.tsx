@@ -1,36 +1,27 @@
 import { useProduct } from "@/modules/client/hooks/useProduct";
-import type { ProductInterface } from "@/core/interfaces/product.interface";
 import { Button } from "@/shared/components/ui/button";
-import { useEffect, useMemo, useState } from "react";
 import { useNavigate, useParams } from "react-router"
 import { motion } from 'framer-motion';
 import { ArrowLeft } from "lucide-react";
+import ProductDetailModal from "./ProductDetail";
 
 export const ProductDetailPage = () => {
 
     const { id } = useParams<{ id: string }>()
     const navigate = useNavigate();
-    const { getProductById } = useProduct()
-    const [product, setProduct] = useState<ProductInterface | null>(null)
+    const { productDetailsQuery } = useProduct({
+        productId: id
+    })
 
 
-    const fetchProduct = useMemo(() => {
-        if (!id) return null;
-        return async () => {
-            try {
-                const productData = await getProductById(id);
-                if (productData) { setProduct(productData) }
-            } catch (error) {
-                console.error("Error fetching product", error)
-            }
-        }
-    }, [id, getProductById])
-    // fet<chProduct()
-    useEffect(() => {
-        if (fetchProduct) {
-            fetchProduct()
-        }
-    }, [fetchProduct])
+    if (productDetailsQuery.isLoading) {
+        return <div>Cargando producto</div>
+    }
+
+    if (productDetailsQuery.error) {
+        return <div>Error al cargar el producto {productDetailsQuery.error.message}</div>
+    }
+
 
 
     return (
@@ -49,7 +40,7 @@ export const ProductDetailPage = () => {
                     Volver a productos
                 </Button>
 
-                {/* <ProductDetailModal product={product} /> */}
+                <ProductDetailModal product={productDetailsQuery.data} />
             </motion.div>
         </div>
     )

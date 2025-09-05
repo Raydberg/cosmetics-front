@@ -5,6 +5,8 @@ import { motion } from "framer-motion";
 import { Link } from "react-router";
 import type { ProductInterface } from "@/core/interfaces/product.interface";
 import { cn } from "@/core/lib/utils";
+import { useQueryClient } from "@tanstack/react-query";
+import { ProductService } from "@/core/services/product.service";
 
 export interface ProductCard {
     className?: string
@@ -12,6 +14,19 @@ export interface ProductCard {
 }
 
 export const ProductCard = ({ product, className }: ProductCard) => {
+
+    const queryClient = useQueryClient();
+
+    const prefetchData = () => {
+        queryClient.prefetchQuery({
+            queryKey: ['products', product.$id],
+            queryFn: () => ProductService.getProductById(product.$id!),
+            staleTime: 1000 * 60
+        })
+    }
+
+
+
     return (
         <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -23,7 +38,10 @@ export const ProductCard = ({ product, className }: ProductCard) => {
                 , className
             )}
         >
-            <Link to={`/products/${product.$id}`}>
+            <Link
+                onMouseOver={prefetchData}
+                viewTransition
+                to={`/products/${product.$id}`}>
                 {product?.hasDiscount && (
                     <motion.div
                         initial={{ scale: 0, rotate: -180 }}

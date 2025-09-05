@@ -1,37 +1,15 @@
 
-import { useFilters } from "@/core/hooks/useFilters"
 import { FilterProducts } from "@/shared/components/filter-products"
 import { Button } from "@/shared/components/ui/button"
 import { ProductList } from "./ProductList"
 import { X } from "lucide-react"
 import { InputSearch } from "@/shared/components/input-search"
-import { useSearchParams } from "react-router"
-import { useEffect } from "react"
+import { useProduct } from "../hooks/useProduct"
 
 
 
-const ProductsContent = () => {
-    const { clearFilters, hasActiveFilters, filters, setSearchQuery, toggleCategory } = useFilters()
-
-    const [searchParams, setSearchParams] = useSearchParams()
-
-
-    useEffect(() => {
-        const categoryParam = searchParams.get("category")
-        //se activa solo cuando no hay catgoria selecionada
-        if (categoryParam && !filters.selectCategories.includes(categoryParam)) {
-            toggleCategory(categoryParam)
-            const newSearchParam = new URLSearchParams(searchParams);
-
-            newSearchParam.delete('category')
-            setSearchParams(newSearchParam, { replace: true })
-        }
-    }, [searchParams, filters.selectCategories, toggleCategory, setSearchParams])
-
-    const handleSearch = (query: string) => {
-        setSearchQuery(query)
-    }
-
+export const ProductPage = () => {
+    const { filters, filterActions } = useProduct({})
     return (
         <div className="container mx-auto px-4 py-8">
             {/* Header con título y botón limpiar */}
@@ -39,10 +17,10 @@ const ProductsContent = () => {
                 <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100">
                     Productos
                 </h1>
-                {hasActiveFilters && (
+                {filters.hasActiveFilters && (
                     <Button
                         variant="outline"
-                        onClick={clearFilters}
+                        onClick={filterActions.resetFilters}
                         className="flex items-center gap-2 w-fit"
                     >
                         <X size={16} />
@@ -53,7 +31,7 @@ const ProductsContent = () => {
 
             <div className="mb-8">
                 <InputSearch
-                    onSearch={handleSearch}
+                    onSearch={(e) => filterActions.setSearchQuery(e)}
                     className="w-full max-w-3xl mx-auto"
                     enableRealTimeSearch={true}
                     debounceDelay={300}
@@ -66,7 +44,7 @@ const ProductsContent = () => {
                             <Button
                                 variant="ghost"
                                 size="sm"
-                                onClick={() => setSearchQuery("")}
+                                onClick={() => filterActions.setSearchQuery('')}
                                 className="h-4 w-4 p-0 hover:bg-purple-200 dark:hover:bg-purple-800 rounded-full"
                             >
                                 <X size={12} />
@@ -76,14 +54,11 @@ const ProductsContent = () => {
                 )}
             </div>
 
-            {/* Layout principal */}
             <div className="flex flex-col lg:flex-row gap-8">
-                {/* Filtros - Responsive */}
                 <div className="lg:w-80 shrink-0">
                     <FilterProducts />
                 </div>
 
-                {/* Lista de productos */}
                 <div className="flex-1 min-w-0">
                     <ProductList />
                 </div>
@@ -92,6 +67,3 @@ const ProductsContent = () => {
     )
 }
 
-export const ProductPage = () => {
-    return <ProductsContent />
-}

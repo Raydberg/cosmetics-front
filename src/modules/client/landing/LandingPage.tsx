@@ -4,14 +4,10 @@ import { ArrowRight } from "lucide-react"
 import { Link } from "react-router"
 import { CategorySection } from "./components/CategorySection"
 import { useProduct } from "@/modules/client/hooks/useProduct"
-import { useEffect } from "react"
+
 
 export const LandingPage = () => {
-  const { products, getActiveProducts } = useProduct()
-
-  useEffect(() => {
-    getActiveProducts()
-  }, [])
+  const { activeProductsQuery } = useProduct({})
 
 
   return (
@@ -25,18 +21,14 @@ export const LandingPage = () => {
 
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 space-x-2">
           {
-            products.map((product) => {
-              if (product.featured) {
-                return (
-                  <ProductCard key={product.$id} product={product} />
-                )
-              }
-            })
+            activeProductsQuery.data?.filter(product => product.featured).map((product) => (
+              <ProductCard key={product.$id} product={product} />
+            ))
           }
         </div>
         <div>
           <Button>
-            <Link to={'/products'}>
+            <Link to={'/products'} viewTransition>
               Ver todos los Productos
             </Link>
             <ArrowRight />
