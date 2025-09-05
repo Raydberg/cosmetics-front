@@ -61,7 +61,7 @@ export const AdminHeader = () => {
                     <div
                         className="flex items-center space-x-2"
                     >
-                        <Link to="/" className="flex items-center space-x-2">
+                        <Link to="/" className="flex items-center space-x-2" viewTransition>
                             <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br from-rose-500 to-rose-700">
                                 <Sparkles className="h-5 w-5 text-white" />
                             </div>
@@ -73,12 +73,12 @@ export const AdminHeader = () => {
 
 
                     <div className="hidden items-center space-x-4 lg:flex">
-                        <Link to={'/'}>
+                        <Link to={'/'} viewTransition>
                             <Button variant={'outline'} className="cursor-pointer">
                                 Ver sitio
                             </Button>
                         </Link>
-                        <Link to={'/'}>
+                        <Link to={'/'} viewTransition>
                             <Button className="cursor-pointer">
                                 <ArrowRightFromLine />
                                 Cerrar Sesion

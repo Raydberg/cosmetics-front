@@ -11,7 +11,7 @@ import {
 } from "@tanstack/react-table"
 import { Button } from "@/shared/components/ui/button"
 import { DropdownMenu, DropdownMenuCheckboxItem, DropdownMenuContent, DropdownMenuTrigger } from "@/shared/components/ui/dropdown-menu"
-import { useEffect, useState, useCallback, useMemo } from "react"
+import { useState, useCallback, useMemo } from "react"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/shared/components/ui/table"
 import { ChevronDown, Plus, RefreshCw, Search } from "lucide-react"
 import { columns } from "./colums"
@@ -21,42 +21,28 @@ import { useProduct } from "@/modules/client/hooks/useProduct"
 
 export function DataTable() {
 
-  const { products, loading, error, getActiveProducts, clearCache } = useProduct()
+  const { allProductQuery } = useProduct()
   const [searchTerm, setSearchTerm] = useState('')
-  const [dataLoaded, setDataLoaded] = useState(false)
+
 
   const [sorting, setSorting] = useState<SortingState>([])
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({})
   const [rowSelection, setRowSelection] = useState({})
 
-  useEffect(() => {
-    if (!dataLoaded) {
-      const loadData = async () => {
-        try {
-
-          await getActiveProducts(true)
-          setDataLoaded(true)
-        } catch (error) {
-          console.error("Error loading products:", error)
-        }
-      }
-
-      loadData()
-    }
-  }, [])
 
 
   const filteredProducts = useMemo(() => {
-    return products.filter(product =>
+    return allProductQuery.data?.filter(product =>
       product.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
       product.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
       (product.brand && product.brand.toLowerCase().includes(searchTerm.toLowerCase()))
     )
-  }, [products, searchTerm])
+  }, [allProductQuery.data, searchTerm])
 
+  console.log(allProductQuery.data)
   const table = useReactTable({
-    data: filteredProducts,
+    data: filteredProducts ?? [],
     columns,
     onSortingChange: setSorting,
     onColumnFiltersChange: setColumnFilters,
@@ -81,10 +67,8 @@ export function DataTable() {
 
 
   const handleReloadData = useCallback(() => {
-    clearCache()
-    getActiveProducts(true)
-    setDataLoaded(true)
-  }, [clearCache, getActiveProducts])
+
+  }, [])
 
   return (
     <div className="w-full">
@@ -144,14 +128,14 @@ export function DataTable() {
         </DropdownMenu>
       </div>
 
-      {loading ? (
+      {allProductQuery.isLoading ? (
         <div className="flex justify-center items-center p-8">
           <RefreshCw className="h-8 w-8 animate-spin text-purple-600" />
           <span className="ml-2">Cargando productos...</span>
         </div>
-      ) : error ? (
+      ) : allProductQuery.error ? (
         <div className="text-center p-8">
-          <p className="text-red-500 mb-2">Error: {error}</p>
+          <p className="text-red-500 mb-2">Error: {allProductQuery.error.message}</p>
           <Button onClick={handleReloadData}>Reintentar</Button>
         </div>
       ) : (

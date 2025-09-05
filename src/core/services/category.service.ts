@@ -7,13 +7,13 @@ import type { CategoryInterface } from "../interfaces/category.interface";
 export class CategoryService {
 
 
-    static async getAllCategories() {
+    static async getAllCategories(): Promise<CategoryInterface[]> {
         try {
-            console.log("Trayendo las categorias de la API")
+            // console.log("Trayendo las categorias de la API")
             const result = await db.listDocuments(DB_ID, COLLECTIONS.CATEGORY);
             return result.documents.map(doc => {
                 const validation = CategorySchema.safeParse(doc);
-                return validation.data as CategoryService;
+                return validation.data as CategoryInterface;
             })
         } catch (error) {
             throw new Error(getErrorMessage(error));

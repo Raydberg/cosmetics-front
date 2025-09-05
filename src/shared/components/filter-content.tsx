@@ -23,7 +23,7 @@ export const FilterContent = () => {
         }))
     }
 
-    const { categoryActiveQuery,selectedCategory } = useCategory()
+    const { categoryActiveQuery, selectedCategory } = useCategory()
 
     const { filters, filterActions } = useProduct()
 
@@ -69,9 +69,11 @@ export const FilterContent = () => {
                         >
                             <div className="space-y-3 pl-2">
                                 {categoryActiveQuery.data?.map((category, index) => {
+
                                     const isSelected = Array.isArray(selectedCategory)
-                                        ? selectedCategory.includes(category.$id!)
-                                        : selectedCategory && (selectedCategory.$id === category.$id);
+                                        ? selectedCategory.includes(category.$id ?? '')
+                                        : selectedCategory ? (selectedCategory.$id === category.$id) : false;
+
                                     return (
                                         <motion.div
                                             key={category.$id}
@@ -85,7 +87,7 @@ export const FilterContent = () => {
                                         >
                                             <Checkbox
                                                 id={category.$id}
-                                                checked={isSelected!}
+                                                checked={Boolean(isSelected)}
                                                 onCheckedChange={() => filterActions.toggleCategory(category.$id!)}
                                             />
                                             <Label

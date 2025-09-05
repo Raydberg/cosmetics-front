@@ -54,7 +54,7 @@ export const useProduct = ({ productId }: Props = {}) => {
         staleTime: 2 * 60 * 1000,
     });
 
-    // Client-side filtering for price ranges and search query
+
     const products = useMemo(() => {
         const baseProducts = filteredProductsQuery.data || activeProductsQuery.data || [];
 
@@ -108,14 +108,11 @@ export const useProduct = ({ productId }: Props = {}) => {
         queryFn: () => ProductService.getProductById(productId ?? ''),
         enabled: !!productId,
     });
-    // const getProductById = useQuery({
-    //     queryKey: QUERY_KEYS.product(productId ?? ''),
-    //     queryFn: () => ProductService.getProductById(productId ?? ''),
-    //     enabled: !!productId,
-    // })
-    // const getProductById = async (id: string): Promise<ProductInterface> => {
-    //     return ProductService.getProductById(id);
-    // };
+    const allProductQuery = useQuery({
+        queryKey: QUERY_KEYS.allProducts,
+        queryFn: ProductService.getAllProducts,
+        staleTime: 1000 * 60
+    })
 
     const invalidateProductsCache = () => {
         queryClient.invalidateQueries({ queryKey: QUERY_KEYS.activeProducts });
@@ -128,7 +125,7 @@ export const useProduct = ({ productId }: Props = {}) => {
 
         activeProductsQuery,
         filteredProductsQuery,
-
+        allProductQuery,
         // Filter state from Zustand
         filters: {
             categoryIds,

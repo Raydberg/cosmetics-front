@@ -1,6 +1,6 @@
 import { Button } from "./ui/button"
 import { Filter, X } from "lucide-react"
-import { useState } from "react"
+import { Fragment, useState } from "react"
 import { motion, AnimatePresence } from "framer-motion"
 import { FilterContent } from "./filter-content"
 
@@ -8,7 +8,7 @@ export const FilterProducts = () => {
     const [isOpen, setIsOpen] = useState(false)
 
     return (
-        <>
+        <Fragment>
             <div className="md:hidden fixed top-20 right-4 z-50">
                 <motion.div
                     initial={{ scale: 0, rotate: -180 }}
@@ -113,7 +113,7 @@ export const FilterProducts = () => {
                     </>
                 )}
             </AnimatePresence>
-        </>
+        </Fragment>
     )
 }
 

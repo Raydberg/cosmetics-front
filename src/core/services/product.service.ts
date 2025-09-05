@@ -13,6 +13,20 @@ interface FilterOptions {
 }
 
 export class ProductService {
+
+    static async getAllProducts(): Promise<ProductInterface[]> {
+        try {
+            const result = await db.listDocuments(DB_ID, COLLECTIONS.PRODUCT)
+
+            return result.documents.map(doc => {
+                const validation = ProductSchema.safeParse(doc)
+                return validation.data as ProductInterface;
+            })
+        } catch (error) {
+            throw new Error(getErrorMessage(error));
+        }
+    }
+
     static async getActiveProducts(): Promise<ProductInterface[]> {
         try {
             const result = await db.listDocuments(DB_ID, COLLECTIONS.PRODUCT, [
