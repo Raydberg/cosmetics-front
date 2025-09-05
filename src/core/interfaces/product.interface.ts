@@ -1,3 +1,5 @@
+import type { CategoryInterface } from "./category.interface"
+
 export interface ProductInterface {
     $id?: string
     name: string
@@ -7,7 +9,7 @@ export interface ProductInterface {
     discountPercentage?: number
     hasDiscount: boolean
     images: string[]
-    categoryId: string
+    categoryId: CategoryInterface
     stock: number
     featured: boolean
     isActive: boolean

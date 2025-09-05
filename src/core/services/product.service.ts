@@ -59,7 +59,7 @@ export class ProductService {
 
     static async getFilteredProducts(filters: FilterOptions): Promise<ProductInterface[]> {
         try {
-            // For category filters, we'll query the database directly
+
             if (filters.categoryIds?.length) {
                 const queries = [
                     Query.equal('isActive', true),
@@ -75,6 +75,38 @@ export class ProductService {
                 return this.getActiveProducts();
             }
         } catch (error) {
+            throw new Error(getErrorMessage(error));
+        }
+    }
+    static async updateProduct(productId: string, productData: Partial<ProductInterface>): Promise<ProductInterface> {
+        try {
+
+            // Eliminar propiedades que no queremos actualizar
+            const updateData = { ...productData };
+            delete updateData.$id;
+            delete updateData.$createdAt;
+            delete updateData.$updatedAt;
+            delete updateData.$collectionId;
+            delete updateData.$databaseId;
+            delete updateData.$permissions;
+
+            // Realizar actualización en Appwrite
+            const result = await db.updateDocument(
+                DB_ID,
+                COLLECTIONS.PRODUCT,
+                productId,
+                updateData
+            );
+
+            const validation = ProductSchema.safeParse(result);
+
+            if (validation.success) {
+                return validation.data as ProductInterface;
+            } else {
+                throw new Error("Datos actualizados inválidos");
+            }
+        } catch (error) {
+            console.error("Error actualizando producto:", error);
             throw new Error(getErrorMessage(error));
         }
     }

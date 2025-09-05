@@ -1,7 +1,9 @@
-import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useMemo } from "react";
 import { ProductService } from "@/core/services/product.service";
 import { useHasActiveFilters, useProductStore } from "@/core/store/useProductStore";
+import type { ProductInterface } from "@/core/interfaces/product.interface";
+import { toast } from "sonner";
 // import type { ProductInterface } from "@/core/interfaces/product.interface";
 
 
@@ -119,6 +121,26 @@ export const useProduct = ({ productId }: Props = {}) => {
         queryClient.invalidateQueries({ queryKey: QUERY_KEYS.filteredProducts });
     };
 
+
+    const updateProductMutation = useMutation({
+        mutationFn: ({ id, data }: { id: string; data: Partial<ProductInterface> }) => ProductService.updateProduct(id, data),
+        onSuccess: (updatedProduct) => {
+            queryClient.invalidateQueries({ queryKey: ['products'] });
+            queryClient.invalidateQueries({ queryKey: ['products', updatedProduct.$id] });
+            queryClient.invalidateQueries({ queryKey: ['products', 'active'] });
+            queryClient.invalidateQueries({ queryKey: ['products', 'filtered'] });
+            queryClient.setQueryData(
+                ['products', updatedProduct.$id],
+                updatedProduct
+            );
+        },
+        onError: (error) => {
+            console.error('Error al actualizar producto:', error);
+            toast.error(`Error al actualizar producto: ${error.message}`);
+        }
+
+    })
+
     return {
 
         products,
@@ -143,7 +165,7 @@ export const useProduct = ({ productId }: Props = {}) => {
             setPriceSlider,
             resetFilters
         },
-
+        updateProductMutation,
         invalidateProductsCache
     };
 };

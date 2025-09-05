@@ -1,75 +1,187 @@
-import { AnimatePresence, motion } from 'framer-motion'
-import { Button } from '@/shared/components/ui/button'
-import { AlertCircle, ArrowLeft, DollarSign, ImageIcon, Info, Package, Plus, RefreshCw, Save, Sparkles, X } from 'lucide-react'
-import { Link, useParams } from 'react-router'
-import { useProduct } from '@/modules/client/hooks/useProduct'
-
-import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from '@/shared/components/ui/form'
-import { useForm } from 'react-hook-form'
-import { ProductSchema } from '../../../core/zod/product-shemas';
+import { useState, useCallback, useEffect } from 'react'
+import { motion, AnimatePresence } from 'framer-motion'
+import { useForm, useFieldArray } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
-import z from 'zod'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/shared/components/ui/card'
+import { z } from 'zod'
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle
+} from '@/shared/components/ui/card'
+import {
+  Form,
+  FormControl,
+  FormDescription,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage
+} from '@/shared/components/ui/form'
 import { Input } from '@/shared/components/ui/input'
+import { Button } from '@/shared/components/ui/button'
 import { Textarea } from '@/shared/components/ui/textarea'
-import { useEffect } from 'react'
-import { useCategory } from '@/core/hooks/useCategory'
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/shared/components/ui/select'
 import { Switch } from '@/shared/components/ui/switch'
+import { Badge } from '@/shared/components/ui/badge'
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue
+} from '@/shared/components/ui/select'
 import { Separator } from '@/shared/components/ui/separator'
+import {
+  X,
+  Plus,
+  ImageIcon,
+  Package,
+  DollarSign,
+  Tag,
+  Info,
+  ArrowLeft,
+  Save,
+  Eye,
+  Sparkles
+} from 'lucide-react'
+import { useCategory } from '@/core/hooks/useCategory'
 import { toast } from 'sonner'
+import { Link } from 'react-router'
 
-type ProductFormData = z.infer<typeof ProductSchema>
+// ✅ Schema de validación corregido - todos los campos opcionales explícitos
+const productSchema = z.object({
+  name: z.string().min(1, 'El nombre es requerido').max(100, 'Máximo 100 caracteres'),
+  description: z.string().min(10, 'Mínimo 10 caracteres').max(500, 'Máximo 500 caracteres'),
+  price: z.number().min(0.01, 'El precio debe ser mayor a 0'),
+  originalPrice: z.number().optional().nullable(),
+  discountPercentage: z.number().min(0).max(100).optional(),
+  hasDiscount: z.boolean().optional(),
+  images: z.array(z.string().url('URL inválida')).min(1, 'Mínimo 1 imagen requerida'),
+  categoryId: z.string().min(1, 'Categoría requerida'),
+  stock: z.number().int().min(0, 'Stock debe ser mayor o igual a 0'),
+  featured: z.boolean().optional(),
+  isActive: z.boolean().optional(),
+  brand: z.string().optional().nullable(),
+  tags: z.array(z.string()).optional()
+})
 
-export const UpdateProduct = () => {
-  const { id } = useParams()
-  const { productDetailsQuery } = useProduct({ productId: id })
-  const { categoryActiveQuery } = useCategory()
-  console.log(productDetailsQuery.data)
+type ProductFormData = z.infer<typeof productSchema>
 
+export const NewProduct = () => {
+  const [isLoading, setIsLoading] = useState(false)
+  const [newTag, setNewTag] = useState('')
+  const [newImageUrl, setNewImageUrl] = useState('')
+  const [previewImage, setPreviewImage] = useState<string | null>(null)
+
+  const { categories, getActiveCategories, loading: categoriesLoading } = useCategory()
+
+  // ✅ Form con valores por defecto explícitos
   const form = useForm<ProductFormData>({
-    resolver: zodResolver(ProductSchema),
-    defaultValues: {}
-  })
-  useEffect(() => {
-    if (productDetailsQuery.data) {
-      form.reset(productDetailsQuery.data);
+    resolver: zodResolver(productSchema),
+    defaultValues: {
+      name: '',
+      description: '',
+      price: 0,
+      originalPrice: null,
+      discountPercentage: 0,
+      hasDiscount: false,
+      images: [],
+      categoryId: '',
+      stock: 0,
+      featured: false,
+      isActive: true,
+      brand: '',
+      tags: []
     }
-  }, [productDetailsQuery.data, form]);
+  })
 
-  // console.log("Category", productDetailsQuery.data?.images.map(value => console.log(value)))
+  const { fields: imageFields, append: appendImage, remove: removeImage } = useFieldArray({
+    control: form.control,
+    name: 'images'
+  })
 
+  const { fields: tagFields, append: appendTag, remove: removeTag } = useFieldArray({
+    control: form.control,
+    name: 'tags'
+  })
 
-  if (!productDetailsQuery.data) {
-    return (
-      <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-purple-50 dark:from-gray-900 dark:via-gray-800 dark:to-purple-900/20">
-        <div className="container mx-auto px-4 py-8 max-w-5xl">
-          <div className="flex items-center justify-center h-96">
-            <div className="text-center">
-              <AlertCircle className="h-16 w-16 text-red-500 mx-auto mb-4" />
-              <h2 className="text-xl font-semibold text-gray-900 dark:text-gray-100 mb-2">
-                Error al cargar el producto
-              </h2>
-              <p className="text-gray-600 dark:text-gray-400 mb-4">
-                No se pudo cargar la información del producto. Por favor intenta nuevamente.
-              </p>
-              <div className="flex gap-2 justify-center">
-                <Button variant="outline">
-                  <RefreshCw className="h-4 w-4 mr-2" />
-                  Reintentar
-                </Button>
-                <Link to="/admin" viewTransition>
-                  <Button>
-                    <ArrowLeft className="h-4 w-4 mr-2" />
-                    Volver al panel
-                  </Button>
-                </Link>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    )
+  useEffect(() => {
+    getActiveCategories()
+  }, [getActiveCategories])
+
+  // Observar cambios en hasDiscount y originalPrice
+  const hasDiscount = form.watch('hasDiscount')
+  const price = form.watch('price')
+  const originalPrice = form.watch('originalPrice')
+
+  // Calcular porcentaje automáticamente
+  useEffect(() => {
+    if (hasDiscount && originalPrice && price && originalPrice > price) {
+      const percentage = Math.round(((originalPrice - price) / originalPrice) * 100)
+      form.setValue('discountPercentage', percentage)
+    } else if (!hasDiscount) {
+      form.setValue('discountPercentage', 0)
+      form.setValue('originalPrice', null)
+    }
+  }, [hasDiscount, price, originalPrice, form])
+
+  const addImage = useCallback(() => {
+    if (newImageUrl.trim()) {
+      try {
+        new URL(newImageUrl) // Validar URL
+        appendImage(newImageUrl.trim())
+        setNewImageUrl('')
+        setPreviewImage(null)
+        toast.success('Imagen agregada correctamente')
+      } catch {
+        toast.error('URL de imagen inválida')
+      }
+    }
+  }, [newImageUrl, appendImage])
+
+  const addTag = useCallback(() => {
+    if (newTag.trim()) {
+      const tagExists = tagFields.some(field => field.value.toLowerCase() === newTag.trim().toLowerCase())
+      if (!tagExists) {
+        appendTag(newTag.trim())
+        setNewTag('')
+        toast.success('Etiqueta agregada')
+      } else {
+        toast.warning('Esta etiqueta ya existe')
+      }
+    }
+  }, [newTag, tagFields, appendTag])
+
+  const previewImageUrl = useCallback((url: string) => {
+    try {
+      new URL(url)
+      setPreviewImage(url)
+    } catch {
+      setPreviewImage(null)
+    }
+  }, [])
+
+  const onSubmit = async (data: ProductFormData) => {
+    setIsLoading(true)
+    try {
+      console.log('Datos del producto:', data)
+      // Aquí iría la lógica para guardar el producto
+      // const result = await createProduct(data)
+
+      await new Promise(resolve => setTimeout(resolve, 2000)) // Simular guardado
+
+      toast.success('Producto creado exitosamente!')
+
+      // Opcional: resetear el formulario
+      // form.reset()
+
+    } catch (error) {
+      console.error('Error al guardar:', error)
+      toast.error('Error al crear el producto')
+    } finally {
+      setIsLoading(false)
+    }
   }
 
   return (
@@ -90,24 +202,28 @@ export const UpdateProduct = () => {
             </Link>
             <div>
               <h1 className="text-3xl font-bold bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent">
-                Editar Producto
+                Nuevo Producto
               </h1>
               <p className="text-gray-600 dark:text-gray-400">
-                {'Actualiza la información del producto'}
+                Completa la información para crear un nuevo producto
               </p>
             </div>
           </div>
           <div className="flex items-center gap-2">
-            {/* <ProductPreview
-              formData={form.watch() as unknown as ProductInterface}
-              categories={categories}
-            /> */}
+            <Button variant="outline" size="sm" type="button">
+              <Eye className="h-4 w-4 mr-2" />
+              Vista previa
+            </Button>
           </div>
         </motion.div>
-        <Form {...form} >
-          <form className='space-y-6'>
+
+        <Form {...form}>
+          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+              {/* Columna principal - Información básica */}
               <div className="lg:col-span-2 space-y-6">
+
+                {/* Información básica */}
                 <motion.div
                   initial={{ opacity: 0, x: -20 }}
                   animate={{ opacity: 1, x: 0 }}
@@ -188,19 +304,19 @@ export const UpdateProduct = () => {
                           render={({ field }) => (
                             <FormItem>
                               <FormLabel>Categoría *</FormLabel>
-                              <Select onValueChange={field.onChange} >
+                              <Select onValueChange={field.onChange} defaultValue={field.value}>
                                 <FormControl>
                                   <SelectTrigger>
                                     <SelectValue placeholder="Selecciona una categoría" />
                                   </SelectTrigger>
                                 </FormControl>
                                 <SelectContent>
-                                  {categoryActiveQuery.isLoading ? (
+                                  {categoriesLoading ? (
                                     <SelectItem value="loading" disabled>
                                       Cargando categorías...
                                     </SelectItem>
                                   ) : (
-                                    categoryActiveQuery.data?.map((category) => (
+                                    categories.map((category) => (
                                       <SelectItem key={category.$id} value={category.$id!}>
                                         {category.name}
                                       </SelectItem>
@@ -216,6 +332,7 @@ export const UpdateProduct = () => {
                     </CardContent>
                   </Card>
                 </motion.div>
+
                 {/* Precios */}
                 <motion.div
                   initial={{ opacity: 0, x: -20 }}
@@ -303,7 +420,7 @@ export const UpdateProduct = () => {
                       />
 
                       <AnimatePresence>
-                        {productDetailsQuery.data.hasDiscount && (
+                        {hasDiscount && (
                           <motion.div
                             initial={{ opacity: 0, height: 0 }}
                             animate={{ opacity: 1, height: 'auto' }}
@@ -370,7 +487,6 @@ export const UpdateProduct = () => {
                   </Card>
                 </motion.div>
 
-
                 {/* Imágenes */}
                 <motion.div
                   initial={{ opacity: 0, x: -20 }}
@@ -389,7 +505,7 @@ export const UpdateProduct = () => {
                     </CardHeader>
                     <CardContent className="space-y-4">
                       <div className="flex gap-2">
-                        {/* <Input
+                        <Input
                           placeholder="https://ejemplo.com/imagen.jpg"
                           value={newImageUrl}
                           onChange={(e) => {
@@ -398,17 +514,17 @@ export const UpdateProduct = () => {
                           }}
                           onKeyPress={(e) => e.key === 'Enter' && (e.preventDefault(), addImage())}
                           className="flex-1"
-                        /> */}
-                        {/* <Button
+                        />
+                        <Button
                           type="button"
                           onClick={addImage}
                           disabled={!newImageUrl.trim()}
                         >
                           <Plus className="h-4 w-4" />
-                        </Button> */}
+                        </Button>
                       </div>
 
-                      {/* {previewImage && (
+                      {previewImage && (
                         <motion.div
                           initial={{ opacity: 0, scale: 0.8 }}
                           animate={{ opacity: 1, scale: 1 }}
@@ -420,13 +536,13 @@ export const UpdateProduct = () => {
                             className="w-full h-full object-cover"
                           />
                         </motion.div>
-                      )} */}
+                      )}
 
                       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                         <AnimatePresence>
-                          {productDetailsQuery.data.images.map((field, index) => (
+                          {imageFields.map((field, index) => (
                             <motion.div
-                              key={index}
+                              key={field.id}
                               initial={{ opacity: 0, scale: 0.8 }}
                               animate={{ opacity: 1, scale: 1 }}
                               exit={{ opacity: 0, scale: 0.8 }}
@@ -434,7 +550,7 @@ export const UpdateProduct = () => {
                             >
                               <div className="aspect-square rounded-lg overflow-hidden border bg-gray-50">
                                 <img
-                                  src={field}
+                                  src={field.value}
                                   alt={`Imagen ${index + 1}`}
                                   className="w-full h-full object-cover"
                                   onError={(e) => {
@@ -447,10 +563,73 @@ export const UpdateProduct = () => {
                                 variant="destructive"
                                 size="sm"
                                 className="absolute -top-2 -right-2 h-6 w-6 rounded-full p-0 opacity-0 group-hover:opacity-100 transition-opacity"
-                                onClick={() => console.log(index)}
+                                onClick={() => removeImage(index)}
                               >
                                 <X className="h-3 w-3" />
                               </Button>
+                            </motion.div>
+                          ))}
+                        </AnimatePresence>
+                      </div>
+                    </CardContent>
+                  </Card>
+                </motion.div>
+
+                {/* Tags */}
+                <motion.div
+                  initial={{ opacity: 0, x: -20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ delay: 0.4 }}
+                >
+                  <Card>
+                    <CardHeader>
+                      <CardTitle className="flex items-center gap-2">
+                        <Tag className="h-5 w-5 text-orange-600" />
+                        Etiquetas
+                      </CardTitle>
+                      <CardDescription>
+                        Agrega etiquetas para mejorar la búsqueda del producto
+                      </CardDescription>
+                    </CardHeader>
+                    <CardContent className="space-y-4">
+                      <div className="flex gap-2">
+                        <Input
+                          placeholder="Ej: perfume, lujo, floral"
+                          value={newTag}
+                          onChange={(e) => setNewTag(e.target.value)}
+                          onKeyPress={(e) => e.key === 'Enter' && (e.preventDefault(), addTag())}
+                          className="flex-1"
+                        />
+                        <Button
+                          type="button"
+                          onClick={addTag}
+                          disabled={!newTag.trim()}
+                        >
+                          <Plus className="h-4 w-4" />
+                        </Button>
+                      </div>
+
+                      <div className="flex flex-wrap gap-2">
+                        <AnimatePresence>
+                          {tagFields.map((field, index) => (
+                            <motion.div
+                              key={field.id}
+                              initial={{ opacity: 0, scale: 0.8 }}
+                              animate={{ opacity: 1, scale: 1 }}
+                              exit={{ opacity: 0, scale: 0.8 }}
+                            >
+                              <Badge variant="secondary" className="flex items-center gap-1">
+                                {field.value}
+                                <Button
+                                  type="button"
+                                  variant="ghost"
+                                  size="sm"
+                                  className="h-4 w-4 p-0 hover:bg-transparent"
+                                  onClick={() => removeTag(index)}
+                                >
+                                  <X className="h-3 w-3" />
+                                </Button>
+                              </Badge>
                             </motion.div>
                           ))}
                         </AnimatePresence>
@@ -537,17 +716,17 @@ export const UpdateProduct = () => {
                     <CardContent className="space-y-3 text-sm">
                       <div className="flex justify-between">
                         <span className="text-gray-600 dark:text-gray-400">Imágenes:</span>
-                        <span className="font-medium">{productDetailsQuery.data.images.length}</span>
+                        <span className="font-medium">{imageFields.length}</span>
                       </div>
                       <div className="flex justify-between">
                         <span className="text-gray-600 dark:text-gray-400">Etiquetas:</span>
-                        <span className="font-medium">{productDetailsQuery.data.tags?.length}</span>
+                        <span className="font-medium">{tagFields.length}</span>
                       </div>
                       <div className="flex justify-between">
                         <span className="text-gray-600 dark:text-gray-400">Precio:</span>
-                        <span className="font-medium">S/. {productDetailsQuery.data.price || 0}</span>
+                        <span className="font-medium">S/. {price || 0}</span>
                       </div>
-                      {productDetailsQuery.data.hasDiscount && productDetailsQuery.data.originalPrice && (
+                      {hasDiscount && originalPrice && (
                         <div className="flex justify-between">
                           <span className="text-gray-600 dark:text-gray-400">Descuento:</span>
                           <span className="font-medium text-green-600">
@@ -566,12 +745,12 @@ export const UpdateProduct = () => {
                   transition={{ delay: 0.4 }}
                   className="space-y-3"
                 >
-                  {/* <Button
+                  <Button
                     type="submit"
                     className="w-full bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700"
                     disabled={isLoading}
                   >
-                    {false ? (
+                    {isLoading ? (
                       <div className="flex items-center gap-2">
                         <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
                         Guardando...
@@ -582,14 +761,14 @@ export const UpdateProduct = () => {
                         Crear Producto
                       </div>
                     )}
-                  </Button> */}
+                  </Button>
 
                   <Button
                     type="button"
                     variant="outline"
                     className="w-full"
                     onClick={() => {
-                      
+                      // Lógica para guardar como borrador
                       toast.info('Producto guardado como borrador')
                     }}
                   >
@@ -597,7 +776,6 @@ export const UpdateProduct = () => {
                   </Button>
                 </motion.div>
               </div>
-
             </div>
           </form>
         </Form>
