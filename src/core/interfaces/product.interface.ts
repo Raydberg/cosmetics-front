@@ -9,7 +9,7 @@ export interface ProductInterface {
     discountPercentage?: number
     hasDiscount: boolean
     images: string[]
-    categoryId: CategoryInterface
+    categoryId: CategoryInterface | string
     stock: number
     featured: boolean
     isActive: boolean

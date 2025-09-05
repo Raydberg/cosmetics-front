@@ -80,35 +80,32 @@ export class ProductService {
     }
     static async updateProduct(productId: string, productData: Partial<ProductInterface>): Promise<ProductInterface> {
         try {
+            console.log("🔄 Actualizando producto:", productId);
+            console.log("📦 Datos a actualizar:", productData);
 
-            // Eliminar propiedades que no queremos actualizar
-            const updateData = { ...productData };
-            delete updateData.$id;
-            delete updateData.$createdAt;
-            delete updateData.$updatedAt;
-            delete updateData.$collectionId;
-            delete updateData.$databaseId;
-            delete updateData.$permissions;
+            // Validar campos críticos - evitar valores vacíos en categoryId
+            if (productData.categoryId === "") {
+                delete productData.categoryId;
+            }
 
-            // Realizar actualización en Appwrite
+            // Asegurar que originalPrice se maneje correctamente
+            if (productData.hasOwnProperty('originalPrice') && productData.originalPrice === null) {
+                // Si estamos actualizando originalPrice a null, asegúrate de que el backend lo acepta
+                // Algunas APIs prefieren eliminar el campo completamente en lugar de establecerlo a null
+                delete productData.originalPrice;
+            }
+
             const result = await db.updateDocument(
                 DB_ID,
                 COLLECTIONS.PRODUCT,
                 productId,
-                updateData
+                productData
             );
 
-            const validation = ProductSchema.safeParse(result);
-
-            if (validation.success) {
-                return validation.data as ProductInterface;
-            } else {
-                throw new Error("Datos actualizados inválidos");
-            }
+            return result as ProductInterface;
         } catch (error) {
-            console.error("Error actualizando producto:", error);
+            console.error("❌ Error actualizando producto:", error);
             throw new Error(getErrorMessage(error));
         }
     }
-
 }
