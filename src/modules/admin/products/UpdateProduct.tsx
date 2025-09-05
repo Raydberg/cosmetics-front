@@ -121,11 +121,48 @@ export const UpdateProduct = () => {
         return newValue !== originalValue;
       };
 
-      // Verificar solo campos individuales
+      // Verificar campos individuales que deseas poder actualizar
       if (isValueChanged(data.name, originalData?.name))
         changedFields.name = data.name;
 
-      // NO incluir otros campos a menos que se hayan modificado realmente
+      // Añadir verificación para la descripción
+      if (isValueChanged(data.description, originalData?.description))
+        changedFields.description = data.description;
+
+      // Añadir otros campos que deseas actualizar
+      if (isValueChanged(data.price, originalData?.price))
+        changedFields.price = data.price;
+
+      if (isValueChanged(data.stock, originalData?.stock))
+        changedFields.stock = data.stock;
+
+      if (isValueChanged(data.brand, originalData?.brand))
+        changedFields.brand = data.brand ;
+
+      if (isValueChanged(data.categoryId, originalData?.categoryId.$id || originalData?.categoryId))
+        changedFields.categoryId = data.categoryId;
+
+      if (isValueChanged(data.isActive, originalData?.isActive))
+        changedFields.isActive = data.isActive;
+
+      if (isValueChanged(data.featured, originalData?.featured))
+        changedFields.featured = data.featured;
+
+      if (isValueChanged(data.hasDiscount, originalData?.hasDiscount))
+        changedFields.hasDiscount = data.hasDiscount;
+
+      if (isValueChanged(data.originalPrice, originalData?.originalPrice))
+        changedFields.originalPrice = data.originalPrice;
+
+      if (isValueChanged(data.discountPercentage, originalData?.discountPercentage))
+        changedFields.discountPercentage = data.discountPercentage;
+
+      // Para arrays, usamos comparación más sofisticada
+      if (JSON.stringify(data.tags) !== JSON.stringify(originalData?.tags))
+        changedFields.tags = data.tags;
+
+      if (JSON.stringify(data.images) !== JSON.stringify(originalData?.images))
+        changedFields.images = data.images;
 
       console.log('Campos modificados a enviar:', changedFields);
 
@@ -142,7 +179,7 @@ export const UpdateProduct = () => {
       });
 
       toast.success('Producto actualizado con éxito');
-      navigate('/admin');
+      // navigate('/admin');
     } catch (error) {
       console.error('Error al actualizar producto:', error);
       toast.error(`Error al actualizar: ${error instanceof Error ? error.message : 'Error desconocido'}`);
