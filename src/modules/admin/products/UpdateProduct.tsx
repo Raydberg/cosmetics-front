@@ -75,7 +75,6 @@ export const UpdateProduct = () => {
     name: 'tags'
   });
 
-  // Observar cambios para cálculo automático de descuentos
   const hasDiscount = form.watch('hasDiscount');
   const price = form.watch('price');
   const originalPrice = form.watch('originalPrice');
